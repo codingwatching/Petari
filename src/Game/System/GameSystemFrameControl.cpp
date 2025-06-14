@@ -1,19 +1,21 @@
 #include "Game/System/GameSystemFrameControl.hpp"
 #include "Game/System/MainLoopFramework.hpp"
 
-GameSystemFrameControl::GameSystemFrameControl() {
-    mIs60Fps = true;
+GameSystemFrameControl::GameSystemFrameControl() :
+    mIs60fps(true)
+{
     setMovement60fps();
 }
 
 void GameSystemFrameControl::setMovement60fps() {
-    mIs60Fps = true;
-    if (VIGetTvFormat() == 1) {
+    mIs60fps = true;
+
+    if (VIGetTvFormat() == VI_PAL) {
         MainLoopFramework::sManager->setTickRateFromFrame(1);
     }
     else {
-        MainLoopFramework* fw = MainLoopFramework::get();
-        fw->_10 = 1;
-        fw->_14 = 0;
+        MainLoopFramework* pFramework = MainLoopFramework::sManager;
+        pFramework->mRetraceCount = 1;
+        pFramework->mTickDuration = 0;
     }
 }
