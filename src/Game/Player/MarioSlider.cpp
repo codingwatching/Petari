@@ -1,6 +1,7 @@
 #include "Game/Player/MarioSlider.hpp"
 #include "Game/Enemy/KariKariDirector.hpp"
 #include "Game/Player/Mario.hpp"
+#include "Game/Map/HitInfo.hpp"
 #include "Game/Player/MarioActor.hpp"
 #include "Game/Player/MarioConst.hpp"
 #include "Game/Player/MarioModule.hpp"
@@ -37,8 +38,61 @@ void MarioSlider::calcGroundAccel() {
     MR::normalizeOrZero(&_2C);
 }
 
-// MarioSlider::postureCtrl
-// MarioSlider::calcWallHit
+bool MarioSlider::postureCtrl(MtxPtr) {
+    Mtx rotMtx;
+    TVec3f& frontVec = getFrontVec();
+    f32 rotateAngle = _3C * 3.1415927f;
+    rotateAngle = 0.2f * (rotateAngle * 0.5f);
+    PSMTXRotAxisRad(rotMtx, &frontVec, rotateAngle);
+
+    TVec3f newHeadVec;
+    PSMTXMultVec(rotMtx, &getPlayer()->_368, &newHeadVec);
+
+    MarioConst* pConst = mActor->mConst;
+    Mario* pPlayer = getPlayer();
+    MR::vecBlendSphere(getPlayer()->_1FC, newHeadVec, &pPlayer->_1FC,
+                       pConst->mTable[pConst->mCurrentTable]->mSliderHeadRotateRatio);
+    return false;
+}
+
+void MarioSlider::calcWallHit() {
+    if (getPlayer()->mMovementStates._1A) {
+        TVec3f stack_50(_14);
+        f32 sideDot = MR::vecKillElement(stack_50, *getPlayer()->mSideWallTriangle->getNormal(0), &stack_50);
+
+        if (sideDot < 0.0f) {
+            if (-sideDot < 10.0f) {
+                sideDot = -10.0f;
+            }
+
+            TVec3f stack_20(*getPlayer()->mSideWallTriangle->getNormal(0));
+            stack_20.scale(sideDot);
+            TVec3f stack_2C(stack_50 - stack_20);
+            _14 = stack_2C;
+        }
+    }
+
+    if (getPlayer()->mMovementStates._8) {
+        TVec3f stack_44(_14);
+        f32 frontDot = MR::vecKillElement(stack_44, *getPlayer()->mFrontWallTriangle->getNormal(0), &stack_44);
+
+        if (frontDot < 0.0f) {
+            if (-frontDot < 10.0f) {
+                frontDot = -10.0f;
+            }
+
+            f32 frontScale = 0.5f * frontDot;
+            TVec3f stack_8(*getPlayer()->mFrontWallTriangle->getNormal(0));
+            stack_8.scale(frontScale);
+            TVec3f stack_14(stack_44 - stack_8);
+            _14 = stack_14;
+
+            TVec3f stack_38(_14);
+            MR::normalize(&stack_38);
+            getPlayer()->setFrontVecKeepUp(stack_38);
+        }
+    }
+}
 
 void Mario::startSlider() {
     if (!isStatusActive(mSlider->mStatusId)) {
@@ -187,3 +241,16 @@ bool MarioSlider::close() {
 
     return true;
 }
+
+namespace NrvMarioActor {
+    INIT_NERVE(MarioActorNrvWait);
+    INIT_NERVE(MarioActorNrvGameOver);
+    INIT_NERVE(MarioActorNrvGameOverAbyss);
+    INIT_NERVE(MarioActorNrvGameOverAbyss2);
+    INIT_NERVE(MarioActorNrvGameOverFire);
+    INIT_NERVE(MarioActorNrvGameOverBlackHole);
+    INIT_NERVE(MarioActorNrvGameOverNonStop);
+    INIT_NERVE(MarioActorNrvGameOverSink);
+    INIT_NERVE(MarioActorNrvTimeWait);
+    INIT_NERVE(MarioActorNrvNoRush);
+};  // namespace NrvMarioActor
