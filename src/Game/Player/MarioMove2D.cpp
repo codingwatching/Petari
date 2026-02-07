@@ -51,19 +51,27 @@ void Mario::calcMoveDir2D(f32 a1, f32 a2, TVec3f* pOut) {
         a2 = 0.0f;
     }
 
-    TVec3f stack_8C(_63C);
-    TVec3f stack_80(_648);
-    TVec3f stack_74(_654);
-    TVec3f stack_50(_660);
+    TVec3f stack_8C;
+    TVec3f stack_80;
+    TVec3f stack_74;
     TVec3f stack_68;
+    TVec3f stack_5C;
+
+    stack_8C = _63C;
+    stack_80 = _648;
+    stack_74 = _654;
+
+    TVec3f stack_50(_660);
     PSVECCrossProduct(&stack_74, &stack_50, &stack_68);
     MR::normalize(&stack_68);
 
     if (stack_50.dot(stack_80) < 0.0f) {
-        stack_68 = -stack_68;
+        TVec3f stack_38 = -stack_68;
+        stack_68 = stack_38;
     }
 
-    TVec3f stack_5C(-stack_80);
+    TVec3f stack_2C = -stack_80;
+    stack_5C = stack_2C;
     TVec3f stack_44(_398);
 
     if (_398.dot(stack_50) <= 0.0f) {
@@ -81,9 +89,7 @@ void Mario::calcMoveDir2D(f32 a1, f32 a2, TVec3f* pOut) {
     TVec3f stack_8(stack_5C * a2);
     TVec3f stack_14(stack_68 * a1);
     TVec3f stack_20(stack_14);
-    stack_20.x -= stack_8.x;
-    stack_20.y -= stack_8.y;
-    stack_20.z -= stack_8.z;
+    stack_20.addInLine(stack_8);
     *pOut = stack_20;
 }
 
@@ -93,8 +99,8 @@ void Mario::calcShadowDir2D(const TVec3f& rVec, TVec3f* pOut) {
 }
 
 void Mario::stick2Dadjust(f32& rStickX, f32& rStickY) {
-    if (_10._23 && mMovementStates._1 && !mMovementStates.jumping) {
-        _10._23 = false;
+    if (_10.turning && mMovementStates._1 && !mMovementStates.jumping) {
+        _10.turning = false;
         clear2DStick();
     }
 
@@ -198,29 +204,31 @@ void Mario::stick2Dadjust(f32& rStickX, f32& rStickY) {
     u8 lockX = 0;
     u8 lockY = 0;
 
-    bool doSecondBlock = false;
-    if (angleMove < 0.5235988f || angleMove > 2.617994f || _610) {
-        if (_611) {
-            doSecondBlock = true;
-        } else if (_620 == 0.0f) {
-            rStickY = 0.0f;
+    if (!((_60E != 0 || _60F != 0) && _610 == 0 && _611 == 0)) {
+        bool doSecondBlock = false;
 
-            if (isMainY && __fabsf(stickXInput) > 0.3f) {
-                rStickX = stickXInput >= 0.0f ? mStickPos.z : -mStickPos.z;
-                lockX = 1;
+        if (angleMove < 0.5235988f || angleMove > 2.617994f || _610 != 0) {
+            if (_611 == 0) {
+                if (_620 == 0.0f) {
+                    rStickY = 0.0f;
+                    if (isMainY && __fabsf(stickXInput) > 0.3f) {
+                        rStickX = stickXInput < 0.0f ? -mStickPos.z : mStickPos.z;
+                        lockX = 1;
+                    }
+                }
+            } else {
+                doSecondBlock = true;
             }
+        } else {
+            doSecondBlock = true;
         }
-    } else {
-        doSecondBlock = true;
-    }
 
-    if (doSecondBlock) {
-        if ((angleMove > 1.3962635f && angleMove < 1.7453294f) || _611) {
-            if (!_610 && _61C == 0.0f) {
+        if (doSecondBlock) {
+            if ((angleMove <= 1.3962635f || angleMove >= 1.7453294f) && _611 == 0) {
+            } else if (_610 == 0 && _61C == 0.0f) {
                 rStickX = 0.0f;
-
                 if (isMainX && __fabsf(stickYInput) > 0.3f) {
-                    rStickY = stickYInput >= 0.0f ? mStickPos.z : -mStickPos.z;
+                    rStickY = stickYInput < 0.0f ? -mStickPos.z : mStickPos.z;
                     lockY = 1;
                 }
             }

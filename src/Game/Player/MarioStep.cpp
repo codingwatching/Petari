@@ -11,19 +11,59 @@
 #include "revolution/mtx.h"
 
 void Mario::checkStep() {
-    if (mMovementStates.jumping || mMovementStates._A || !mMovementStates._1) {
+    if (mMovementStates.jumping) {
         return;
     }
 
-    if (isStatusActive(5) || isStatusActive(1) || isStatusActive(6) || isStatusActive(29)) {
+    if (mMovementStates._A) {
         return;
     }
 
-    if (isPlayerModeHopper() || isDamaging() || isSwimming()) {
+    if (!mMovementStates._1) {
         return;
     }
 
-    if (!MR::isNearZero(_184, 0.001f) || !isStickOn() || _750 || mDrawStates.mIsUnderwater) {
+    if (isStatusActive(5)) {
+        return;
+    }
+
+    if (isStatusActive(1)) {
+        return;
+    }
+
+    if (isStatusActive(6)) {
+        return;
+    }
+
+    if (isStatusActive(29)) {
+        return;
+    }
+
+    if (isPlayerModeHopper()) {
+        return;
+    }
+
+    if (isDamaging()) {
+        return;
+    }
+
+    if (isSwimming()) {
+        return;
+    }
+
+    if (!MR::isNearZero(_184, 0.001f)) {
+        return;
+    }
+
+    if (!isStickOn()) {
+        return;
+    }
+
+    if (_750) {
+        return;
+    }
+
+    if (mDrawStates.mIsUnderwater) {
         return;
     }
 
@@ -43,8 +83,10 @@ void Mario::checkStep() {
                 if (__fabsf(frontDot) < 0.3926991f) {
                     TVec3f negGravity2 = -*getGravityVec();
                     TVec3f stepOffset2 = _50C - mPosition;
-
-                    if (stepOffset2.dot(negGravity2) < mActor->getConst().getTable()->mWalkStepHeight) {
+                    f32 stepHeight = stepOffset2.dot(negGravity2);
+                    MarioConst* pConst = mActor->mConst;
+                    MarioConstTable* pTable = pConst->mTable[pConst->mCurrentTable];
+                    if (stepHeight < pTable->mWalkStepHeight) {
                         startStep(_50C);
                     }
                 }
@@ -58,18 +100,25 @@ void Mario::checkStep() {
         return;
     }
 
-    if (!mMovementStates._15 || !mMovementStates._39) {
+    if (!mMovementStates._15) {
         return;
     }
 
-    if (getWorldPadDir().dot(*mFrontWallTriangle->getNormal(0)) >= -0.5f) {
+    if (!mMovementStates._39) {
+        return;
+    }
+
+    const TVec3f* worldPadDir = &getWorldPadDir();
+    if (worldPadDir->dot(*mFrontWallTriangle->getNormal(0)) >= -0.5f) {
         return;
     }
 
     TVec3f negGravity = -*getGravityVec();
     TVec3f stepOffset = _4A4 - mPosition;
-
-    if (stepOffset.dot(negGravity) < mActor->getConst().getTable()->mWalkStepHeight) {
+    f32 stepHeight = stepOffset.dot(negGravity);
+    MarioConst* pConst = mActor->mConst;
+    MarioConstTable* pTable = pConst->mTable[pConst->mCurrentTable];
+    if (stepHeight < pTable->mWalkStepHeight) {
         startStep(_4A4);
     }
 }
