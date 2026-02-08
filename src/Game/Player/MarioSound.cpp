@@ -1,7 +1,7 @@
-#include "Game/Player/Mario.hpp"
-#include "Game/Player/MarioActor.hpp"
 #include "Game/AudioLib/AudAnmSoundObject.hpp"
 #include "Game/GameAudio/AudTalkSoundData.hpp"
+#include "Game/Player/Mario.hpp"
+#include "Game/Player/MarioActor.hpp"
 #include "Game/Player/MarioWait.hpp"
 #include "Game/System/ResourceHolder.hpp"
 #include "Game/Util/LiveActorUtil.hpp"
@@ -9,13 +9,13 @@
 #include <cstring>
 
 extern "C" {
-    extern char lbl_805CB350[];
-    extern char lbl_805CB35B[];
-    extern char lbl_805C98EB[];
-    extern char lbl_805C98FF[];
-    extern char lbl_805C9A48[];
-    extern char lbl_805C9A67[];
-    extern char lbl_806B22C9;
+extern char lbl_805CB350[];
+extern char lbl_805CB35B[];
+extern char lbl_805C98EB[];
+extern char lbl_805C98FF[];
+extern char lbl_805C9A48[];
+extern char lbl_805C9A67[];
+extern char lbl_806B22C9;
 }
 
 struct SoundList {
@@ -556,12 +556,12 @@ SoundList soundlist[] = {
         0,               // 0x14
     },
     {
-        "着地",      // name
-        0x2002a,     // 0x4
-        0x4000000,   // 0x8
+        "着地",        // name
+        0x2002a,       // 0x4
+        0x4000000,     // 0x8
         lbl_805C98FF,  // 0xC
-        0,           // 0x10
-        0,           // 0x14
+        0,             // 0x10
+        0,             // 0x14
     },
     {
         "重い着地",  // name
@@ -748,12 +748,12 @@ SoundList soundlist[] = {
         0,             // 0x14
     },
     {
-        "倒れ",      // name
-        0x20013,     // 0x4
-        0x4000000,   // 0x8
+        "倒れ",        // name
+        0x20013,       // 0x4
+        0x4000000,     // 0x8
         lbl_805C9A48,  // 0xC
-        0,           // 0x10
-        0,           // 0x14
+        0,             // 0x10
+        0,             // 0x14
     },
     {
         "吹っ飛び倒れ",  // name
@@ -764,12 +764,12 @@ SoundList soundlist[] = {
         0,               // 0x14
     },
     {
-        "坂滑り",    // name
-        0x20023,     // 0x4
-        0x9000000,   // 0x8
+        "坂滑り",      // name
+        0x20023,       // 0x4
+        0x9000000,     // 0x8
         lbl_805C9A67,  // 0xC
-        0,           // 0x10
-        0,           // 0x14
+        0,             // 0x10
+        0,             // 0x14
     },
     {
         "ルイージ滑り",  // name
@@ -1508,12 +1508,12 @@ SoundList soundlist[] = {
         0,               // 0x14
     },
     {
-        "スリップ",  // name
-        0x2000b,     // 0x4
-        0x9000000,   // 0x8
+        "スリップ",    // name
+        0x2000b,       // 0x4
+        0x9000000,     // 0x8
         lbl_805C9A67,  // 0xC
-        0,           // 0x10
-        0,           // 0x14
+        0,             // 0x10
+        0,             // 0x14
     },
     {
         "最後の一撃",  // name
@@ -1696,12 +1696,11 @@ struct SoundSwapList {
 SoundSwapList soundswaplist[] = {{"", 0, 0, 0}};
 
 u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
-    u32* pSwapOffset = reinterpret_cast<u32*>(soundswaplist) + globalTablePosition;
+    u32* pSwapOffset = reinterpret_cast< u32* >(soundswaplist) + globalTablePosition;
     u32 count = 0;
-    u32 listOffset = 0;
-
+    s32 i = 0;
     while (true) {
-        SoundList* pEntry = reinterpret_cast<SoundList*>(reinterpret_cast<u8*>(list) + listOffset);
+        SoundList* pEntry = list + i;
         if (pEntry->name[0] == '\0') {
             break;
         }
@@ -1712,13 +1711,13 @@ u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
         if (globalTablePosition != 0) {
             u32 swapOffset = 0;
             while (true) {
-                const SoundSwapList* pSwapEntry = reinterpret_cast<const SoundSwapList*>(reinterpret_cast<const u8*>(soundswaplist) + swapOffset);
+                const SoundSwapList* pSwapEntry = reinterpret_cast< const SoundSwapList* >(reinterpret_cast< const u8* >(soundswaplist) + swapOffset);
                 if (pSwapEntry->name[0] == '\0') {
                     break;
                 }
 
                 if (strcmp(pEntry->name, pSwapEntry->name) == 0) {
-                    u32 soundID = *reinterpret_cast<u32*>(reinterpret_cast<u8*>(pSwapOffset) + swapOffset);
+                    u32 soundID = *reinterpret_cast< u32* >(reinterpret_cast< u8* >(pSwapOffset) + swapOffset);
                     if (soundID != 0) {
                         pEntry->_14 = soundID;
                     }
@@ -1730,7 +1729,7 @@ u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
         }
 
         count++;
-        listOffset += sizeof(SoundList);
+        i++;
     }
 
     return count;
@@ -1773,34 +1772,30 @@ bool Mario::playSoundJ(const char* pSoundName, s32 timing) {
 
         goto systemLevelSound;
 
-actorSound:
-        {
-            JAISoundID soundID(soundlist[index]._14);
-            MR::startSound(mActor, soundID, timing, -1);
-        }
+    actorSound: {
+        JAISoundID soundID(soundlist[index]._14);
+        MR::startSound(mActor, soundID, timing, -1);
+    }
         goto typeEnd;
 
-systemSound:
-        {
-            JAISoundID soundID(soundlist[index]._14);
-            MR::startSystemSE(soundID, timing, -1);
-        }
+    systemSound: {
+        JAISoundID soundID(soundlist[index]._14);
+        MR::startSystemSE(soundID, timing, -1);
+    }
         goto typeEnd;
 
-levelSound:
-        {
-            JAISoundID soundID(soundlist[index]._14);
-            MR::startLevelSound(mActor, soundID, timing, -1, -1);
-        }
+    levelSound: {
+        JAISoundID soundID(soundlist[index]._14);
+        MR::startLevelSound(mActor, soundID, timing, -1, -1);
+    }
         goto typeEnd;
 
-systemLevelSound:
-        {
-            JAISoundID soundID(soundlist[index]._14);
-            MR::startSystemLevelSE(soundID, timing, -1);
-        }
+    systemLevelSound: {
+        JAISoundID soundID(soundlist[index]._14);
+        MR::startSystemLevelSE(soundID, timing, -1);
+    }
 
-typeEnd:
+    typeEnd:
         s32 recurType = soundlist[index]._8._4[0];
         recurType &= ~0x3;
         if (recurType == 0x8) {
@@ -1817,13 +1812,12 @@ typeEnd:
 
         goto recurseEnd;
 
-recurse:
+    recurse:
         if (mDrawStates.mIsUnderwater || mDrawStates._13) {
             playSoundJ(soundlist[index]._C, -1);
         }
 
-recurseEnd:
-        ;
+    recurseEnd:;
     }
 
     bool isFound = _96C->search(&lbl_806B22C9, pSoundName, &index);
@@ -1842,17 +1836,14 @@ void Mario::stopSoundJ(const char* pSoundName, u32 delay) {
 
         if (stopType != 2) {
             if (stopType >= 2) {
-            }
-            else {
+            } else {
                 if (stopType == 0) {
                     JAISoundID soundID(soundlist[index]._14);
                     MR::stopSound(mActor, soundID, delay);
-                }
-                else {
+                } else {
                 }
             }
-        }
-        else {
+        } else {
             JAISoundID soundID(soundlist[index]._14);
             MR::stopSystemSE(soundID, delay);
         }
@@ -1870,13 +1861,12 @@ void Mario::startBas(const char* pAnimName, bool arg2, f32 startFrame, f32 speed
         const JAUSoundAnimation* pRes = nullptr;
 
         if (pAnimName && pHolder->mBasResTable->isExistRes(pAnimName)) {
-            pRes = static_cast<JAUSoundAnimation*>(pHolder->mBasResTable->getRes(pAnimName));
+            pRes = static_cast< JAUSoundAnimation* >(pHolder->mBasResTable->getRes(pAnimName));
         }
 
         if (pRes) {
             mActor->mSoundObject->startAnimation(pRes, arg2, startFrame, speed);
-        }
-        else {
+        } else {
             mActor->mSoundObject->removeAnimation();
         }
 
@@ -1908,12 +1898,11 @@ void Mario::playSoundTeresaFlying() {
     s32 timing = 100;
     if (getCurrentStatus() == 0x1C) {
         if (mWait->_14 == 0) {
-            timing = 100 - static_cast<s32>(mWait->_16);
+            timing = 100 - static_cast< s32 >(mWait->_16);
             if (timing < 0) {
                 timing = 0;
             }
-        }
-        else {
+        } else {
             timing = 0;
         }
     }
