@@ -2,7 +2,7 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/System/GameSequenceFunction.hpp"
 
-StarReturnDemoStarter::StarReturnDemoStarter(const char* pName) : NameObj(pName) {}
+StarReturnDemoStarter::StarReturnDemoStarter(const char* pName) : LiveActor(pName) {}
 StarReturnDemoStarter::~StarReturnDemoStarter() {}
 
 void StarReturnDemoStarter::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter&) {

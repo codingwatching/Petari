@@ -3,7 +3,7 @@
 #include "Game/Util.hpp"
 #include "Game/MapObj/CocoNut.hpp"
 
-OtaRock::OtaRock(const char* pName) : NameObj(pName) {}
+OtaRock::OtaRock(const char* pName) : LiveActor(pName) {}
 OtaRock::~OtaRock() {}
 
 void OtaRock::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {

@@ -2,7 +2,7 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/Util.hpp"
 
-DemoRabbit::DemoRabbit(const char* pName) : NameObj(pName) {}
+DemoRabbit::DemoRabbit(const char* pName) : NPCActor(pName) {}
 DemoRabbit::~DemoRabbit() {}
 
 void DemoRabbit::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {

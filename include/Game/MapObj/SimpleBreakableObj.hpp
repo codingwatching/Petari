@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Game/NameObj/NameObj.hpp"
+#include "Game/MapObj/MapObjActor.hpp"
 
 
-class SimpleBreakableObj : public NameObj {
+class SimpleBreakableObj : public MapObjActor {
 public:
     SimpleBreakableObj(const char*);
     virtual ~SimpleBreakableObj();
 
 private:
-    u8 mPad[(0xE8) - sizeof(NameObj)];
+    u8 mPad[(0xE8) - sizeof(MapObjActor)];
 };

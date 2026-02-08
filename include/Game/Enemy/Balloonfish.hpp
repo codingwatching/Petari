@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Game/NameObj/NameObj.hpp"
+#include "Game/LiveActor/LiveActor.hpp"
 
 
-class Balloonfish : public NameObj {
+class Balloonfish : public LiveActor {
 public:
     Balloonfish(const char*);
     virtual ~Balloonfish();
 
 private:
-    u8 mPad[(0xAC) - sizeof(NameObj)];
+    u8 mPad[(0xAC) - sizeof(LiveActor)];
 };

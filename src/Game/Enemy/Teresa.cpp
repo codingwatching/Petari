@@ -1,5 +1,5 @@
 #include "Game/Enemy/Teresa.hpp"
 
-Teresa::Teresa(const char* pName) : NameObj(pName) {}
+Teresa::Teresa(const char* pName) : LiveActor(pName) {}
 Teresa::~Teresa() {}
 

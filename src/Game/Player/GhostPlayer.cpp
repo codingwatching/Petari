@@ -3,7 +3,7 @@
 #include "Game/Util.hpp"
 #include <cstring>
 
-GhostPlayer::GhostPlayer(const char* pName) : NameObj(pName) {}
+GhostPlayer::GhostPlayer(const char* pName) : LiveActor(pName) {}
 GhostPlayer::~GhostPlayer() {}
 
 void GhostPlayer::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter&) {

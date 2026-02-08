@@ -1,13 +1,9 @@
 #pragma once
 
-#include "Game/NameObj/NameObj.hpp"
+#include "Game/LiveActor/LiveActor.hpp"
 
-
-class KoopaPowerUpSwitch : public NameObj {
+class KoopaPowerUpSwitch : public LiveActor {
 public:
     KoopaPowerUpSwitch(const char*);
     virtual ~KoopaPowerUpSwitch();
-
-private:
-    u8 mPad[(0x8C) - sizeof(NameObj)];
 };

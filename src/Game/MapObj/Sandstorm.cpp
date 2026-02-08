@@ -2,7 +2,7 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/Util.hpp"
 
-Sandstorm::Sandstorm(const char* pName) : NameObj(pName) {}
+Sandstorm::Sandstorm(const char* pName) : LiveActor(pName) {}
 Sandstorm::~Sandstorm() {}
 
 void Sandstorm::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {

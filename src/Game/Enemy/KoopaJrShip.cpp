@@ -2,7 +2,7 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/Util.hpp"
 
-KoopaJrShip::KoopaJrShip(const char* pName) : NameObj(pName) {}
+KoopaJrShip::KoopaJrShip(const char* pName) : LiveActor(pName) {}
 KoopaJrShip::~KoopaJrShip() {}
 
 void KoopaJrShip::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {

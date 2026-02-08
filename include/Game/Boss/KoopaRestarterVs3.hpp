@@ -1,13 +1,9 @@
 #pragma once
 
-#include "Game/NameObj/NameObj.hpp"
+#include "Game/LiveActor/LiveActor.hpp"
 
-
-class KoopaRestarterVs3 : public NameObj {
+class KoopaRestarterVs3 : public LiveActor {
 public:
     KoopaRestarterVs3(const char*);
     virtual ~KoopaRestarterVs3();
-
-private:
-    u8 mPad[(0x8C) - sizeof(NameObj)];
 };

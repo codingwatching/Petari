@@ -2,7 +2,7 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/Util.hpp"
 
-KuriboChief::KuriboChief(const char* pName) : NameObj(pName) {}
+KuriboChief::KuriboChief(const char* pName) : LiveActor(pName) {}
 KuriboChief::~KuriboChief() {}
 
 void KuriboChief::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {

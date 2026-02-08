@@ -1,5 +1,5 @@
 #include "Game/MapObj/CoconutTreeLeaf.hpp"
 
-CoconutTreeLeafGroup::CoconutTreeLeafGroup(const char* pName) : NameObj(pName) {}
+CoconutTreeLeafGroup::CoconutTreeLeafGroup(const char* pName) : LiveActor(pName) {}
 CoconutTreeLeafGroup::~CoconutTreeLeafGroup() {}
 

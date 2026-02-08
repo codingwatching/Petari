@@ -1,5 +1,5 @@
 #include "Game/MapObj/GravityLightRoad.hpp"
 
-GravityLightRoad::GravityLightRoad(const char* pName) : NameObj(pName) {}
+GravityLightRoad::GravityLightRoad(const char* pName) : LiveActor(pName) {}
 GravityLightRoad::~GravityLightRoad() {}
 

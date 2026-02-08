@@ -1,5 +1,5 @@
 #include "Game/MapObj/LavaProminence.hpp"
 
-LavaProminence::LavaProminence(const char* pName) : NameObj(pName) {}
+LavaProminence::LavaProminence(const char* pName) : LiveActor(pName) {}
 LavaProminence::~LavaProminence() {}
 

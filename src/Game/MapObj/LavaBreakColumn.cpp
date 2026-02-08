@@ -1,5 +1,5 @@
 #include "Game/MapObj/LavaBreakColumn.hpp"
 
-LavaBreakColumn::LavaBreakColumn(const char* pName) : NameObj(pName) {}
+LavaBreakColumn::LavaBreakColumn(const char* pName) : AnmModelSwitchMove(pName) {}
 LavaBreakColumn::~LavaBreakColumn() {}
 

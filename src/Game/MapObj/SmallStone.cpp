@@ -1,5 +1,5 @@
 #include "Game/MapObj/SmallStone.hpp"
 
-SmallStone::SmallStone(const char* pName) : NameObj(pName) {}
+SmallStone::SmallStone(const char* pName) : LiveActor(pName) {}
 SmallStone::~SmallStone() {}
 

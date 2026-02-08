@@ -47,11 +47,11 @@ public:
     ModelObj* mTorpedoLight;  // 0x164
 };
 
-class HomingKillerLauncher : public NameObj {
+class HomingKillerLauncher : public LiveActor {
 public:
     HomingKillerLauncher(const char*);
     virtual ~HomingKillerLauncher();
 
 private:
-    u8 mPad[(0x90) - sizeof(NameObj)];
+    u8 mPad[(0x90) - sizeof(LiveActor)];
 };

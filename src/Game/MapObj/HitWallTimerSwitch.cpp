@@ -1,5 +1,5 @@
 #include "Game/MapObj/HitWallTimerSwitch.hpp"
 
-HitWallTimerSwitch::HitWallTimerSwitch(const char* pName) : NameObj(pName) {}
+HitWallTimerSwitch::HitWallTimerSwitch(const char* pName) : LiveActor(pName) {}
 HitWallTimerSwitch::~HitWallTimerSwitch() {}
 

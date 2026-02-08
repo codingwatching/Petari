@@ -8,6 +8,7 @@ class DodoryuStateBase;
 class Dodoryu : public LiveActor {
 public:
     Dodoryu(const char*);
+    virtual ~Dodoryu();
 
     void setHillAppearNumMax();
     void shiftMoveStateNull();

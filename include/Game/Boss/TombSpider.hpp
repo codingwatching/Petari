@@ -15,6 +15,7 @@ class TombSpiderDemo;
 class TombSpider : public LiveActor {
 public:
     TombSpider(const char*);
+    virtual ~TombSpider();
 
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();

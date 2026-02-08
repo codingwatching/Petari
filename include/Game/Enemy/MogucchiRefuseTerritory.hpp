@@ -1,13 +1,9 @@
 #pragma once
 
-#include "Game/NameObj/NameObj.hpp"
+#include "Game/LiveActor/LiveActor.hpp"
 
-
-class MogucchiRefuseTerritory : public NameObj {
+class MogucchiRefuseTerritory : public LiveActor {
 public:
     MogucchiRefuseTerritory(const char*);
     virtual ~MogucchiRefuseTerritory();
-
-private:
-    u8 mPad[(0x8C) - sizeof(NameObj)];
 };

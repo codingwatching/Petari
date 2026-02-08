@@ -2,8 +2,9 @@
 #include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/Util.hpp"
 #include "Game/NPC/NPCActor.hpp"
+#include "Game/NPC/NPCActorItem.hpp"
 
-Caretaker::Caretaker(const char* pName) : NameObj(pName) {}
+Caretaker::Caretaker(const char* pName) : NPCActor(pName) {}
 Caretaker::~Caretaker() {}
 
 void Caretaker::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {
