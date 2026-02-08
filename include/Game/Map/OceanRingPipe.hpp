@@ -19,6 +19,9 @@ public:
         f32 f = 180.0f / (_9C - 1);
         return PI_180 * f;
     }
+    inline int calcPointIndex(int i, int j) const {
+        return (i * _9C) + j;
+    }
 
     const OceanRing* mOceanRing;  // 0x8C
     bool _90;
