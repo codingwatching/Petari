@@ -3,6 +3,8 @@
 #include "Game/LiveActor/LiveActor.hpp"
 #include "Game/LiveActor/PartsModel.hpp"
 #include "Game/Util/MultiEventCamera.hpp"
+#include "Game/NameObj/NameObj.hpp"
+class JMapInfoIter;
 
 class JumpEmitter : public LiveActor {
 public:
@@ -28,4 +30,13 @@ public:
 
 namespace MR {
     bool enableGroupAttack(LiveActor*, f32, f32);
+};
+
+class JumpGuarder : public NameObj {
+public:
+    JumpGuarder(const char*);
+    virtual ~JumpGuarder();
+
+private:
+    u8 mPad[(0x104) - sizeof(NameObj)];
 };

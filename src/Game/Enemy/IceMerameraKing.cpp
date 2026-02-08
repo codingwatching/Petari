@@ -64,7 +64,8 @@ namespace NrvIceMerameraKing {
 
 IceMerameraKing::IceMerameraKing(const char* pName)
     : LiveActor(pName), mFixedPos(nullptr), _90(nullptr), _94(nullptr), mActor(nullptr), _A0(0), _A4(0), _A8(nullptr), _AC(nullptr), _B0(0, 0, 1),
-      _BC(0, 1, 0), _C8(0, 0, 0), _D4(0, 0, 0), _E0(0), _E4(0), _EC(3), _F0(0), mModelArray(), _100(0, 0, 0, 1), _120(false), _110(0.0f, 0.0f, 0.0f),
+      _BC(0, 1, 0), _C8(0, 0, 0), _D4(0, 0, 0), _E0(0), _E4(0), _EC(3), _F0(0), mModelArray(nullptr), _100(0, 0, 0, 1), _120(false),
+      _110(0.0f, 0.0f, 0.0f),
       _11C(0.0f), _121(false) {}
 
 void IceMerameraKing::init(const JMapInfoIter& rIter) {
@@ -119,7 +120,7 @@ void IceMerameraKing::init(const JMapInfoIter& rIter) {
     _AC->makeActorDead();
     s32 childNum = MR::getChildObjNum(rIter);
     _F0 = childNum;
-    mModelArray.mArray.mArr = new ThrowingIce*[childNum];
+    mModelArray = new ThrowingIce*[childNum];
 
     for (s32 i = 0; i < _F0; i++) {
         mModelArray[i] = new ThrowingIce("メラメラ");  // wrong
@@ -149,7 +150,6 @@ void IceMerameraKing::initAfterPlacement() {
     for (int i = 0; i < _F0; i++) {
         bool cChar;
         bool cc = mBinder->_1EC._0;
-        mModelArray.mCount = mBinder->_24;
 
         if (mBinder->_24) {
             cChar = cc & 0xDF;

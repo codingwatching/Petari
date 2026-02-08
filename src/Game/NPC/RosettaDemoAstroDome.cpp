@@ -1,7 +1,9 @@
 #include "Game/NPC/RosettaDemoAstroDome.hpp"
 #include "Game/Demo/DemoFunction.hpp"
+#include "Game/NameObj/NameObjArchiveListCollector.hpp"
 #include "Game/NPC/Rosetta.hpp"
 #include "Game/Screen/IconAButton.hpp"
+#include "Game/Util.hpp"
 #include <cstdio>
 
 // TODO: this file is not linkable yet due to a mismatch in .data related to TalkMessageFunc
@@ -27,6 +29,22 @@ static void EntryDemo(T* caller, const char* pDemoName, const char* pRootName, c
         DemoFunction::registerDemoTalkMessageCtrlDirect(caller->mRosetta, ctrl, pDemoName);
         MR::registerDemoActionFunctorDirect(caller->mRosetta, MR::Functor_Inline(caller, &T::startDemo), pDemoName, "開始");
     }
+}
+
+void Rosetta::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {
+    const char* pObjectName = nullptr;
+
+    if (!MR::getObjectName(&pObjectName, rIter)) {
+        return;
+    }
+
+    for (s32 i = 0; i < pArchiveList->mCount; i++) {
+        if (MR::isEqualString(pArchiveList->getArchive(i), pObjectName)) {
+            return;
+        }
+    }
+
+    pArchiveList->addArchive(pObjectName);
 }
 
 RosettaMonologue::RosettaMonologue() : SimpleLayout("ロゼッタの語り", "PrologueStarSteward", 2, -1), mTextFormer(this, "Text00") {
