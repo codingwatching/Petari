@@ -731,8 +731,8 @@ void Mario::trySpinJump(u8 a1) {
         mMovementStates._5 = false;
         mMovementStates._1D = false;
         _278 = 0.0f;
-        _10._6 = true;
         _10.digitalJump = true;
+        _10._6 = true;
 
         if (isStatusActive(0x17)) {
             mRabbit->hop();
@@ -2564,8 +2564,6 @@ void Mario::doLanding() {
     } else {
         const u32 landingType = mMovementStates._3E;
         if (landingType == 2) {
-            mMovementStates._20 = false;
-            mMovementStates._21 = false;
             stopWalk();
             playSound("中ダメージ着地", -1);
             playSound("倒れ", -1);
@@ -2575,8 +2573,6 @@ void Mario::doLanding() {
         }
 
         if (landingType == 1) {
-            mMovementStates._20 = false;
-            mMovementStates._21 = false;
             playEffect("共通着地普通");
             playEffect("水上ダメージ中");
             if (!isStickFull()) {

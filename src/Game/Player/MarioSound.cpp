@@ -1698,8 +1698,9 @@ SoundSwapList soundswaplist[] = {{"", 0, 0, 0}};
 u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
     u32* pSwapOffset = reinterpret_cast< u32* >(soundswaplist) + globalTablePosition;
     u32 count = 0;
-    SoundList* pEntry = list;
+    s32 i = 0;
     while (true) {
+        SoundList* pEntry = list + i;
         if (pEntry->name[0] == '\0') {
             break;
         }
@@ -1708,28 +1709,27 @@ u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
         pEntry->_14 = pEntry->_4;
 
         if (globalTablePosition != 0) {
-            const SoundSwapList* pSwapEntry = soundswaplist;
-            u32* pSwapSoundID = pSwapOffset;
+            u32 swapOffset = 0;
             while (true) {
+                const SoundSwapList* pSwapEntry = reinterpret_cast< const SoundSwapList* >(reinterpret_cast< const u8* >(soundswaplist) + swapOffset);
                 if (pSwapEntry->name[0] == '\0') {
                     break;
                 }
 
                 if (strcmp(pEntry->name, pSwapEntry->name) == 0) {
-                    u32 soundID = *pSwapSoundID;
+                    u32 soundID = *reinterpret_cast< u32* >(reinterpret_cast< u8* >(pSwapOffset) + swapOffset);
                     if (soundID != 0) {
                         pEntry->_14 = soundID;
                     }
                     break;
                 }
 
-                pSwapEntry++;
-                pSwapSoundID += (sizeof(SoundSwapList) / sizeof(u32));
+                swapOffset += sizeof(SoundSwapList);
             }
         }
 
         count++;
-        pEntry++;
+        i++;
     }
 
     return count;
