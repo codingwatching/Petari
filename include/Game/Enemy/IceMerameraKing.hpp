@@ -2,6 +2,7 @@
 
 #include "Game/LiveActor/LiveActor.hpp"
 #include "Game/LiveActor/ModelObj.hpp"
+#include "Game/Util/Array.hpp"
 
 class CameraTargetDemoActor;
 template < typename T >
@@ -51,9 +52,7 @@ public:
     ThrowingIce* _90;
     Meramera* _94;
     SpinPullParticleCallBack* mSpinParticle;  //_98
-    ThrowingIce** mActor;                     //_9C
-    s32 _A0;
-    s32 _A4;
+    MR::Vector< MR::AssignableArray< ThrowingIce* > > mActor;  //_9C
     LiveActor* _A8;
     LiveActor* _AC;
     TVec3f _B0;

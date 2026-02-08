@@ -20,7 +20,7 @@ public:
     MtxPtr _C;
 };
 
-class Binder : BinderParent {
+class Binder : public BinderParent {
 public:
     Binder(MtxPtr, const TVec3f*, const TVec3f*, f32, f32, u32);
     void clear();
