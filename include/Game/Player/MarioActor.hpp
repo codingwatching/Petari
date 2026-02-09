@@ -5,6 +5,7 @@
 #include "Game/Player/Mario.hpp"
 
 class FootPrint;
+class J3DAnmTexPattern;
 class J3DModelData;
 class JAIAudible;
 class MarioNullBck;
@@ -22,7 +23,7 @@ class TornadoMario;
 class ModelHolder;
 class FixedPosition;
 
-bool gIsLuigi;  // (cc68 - 10000)(r13)
+extern bool gIsLuigi;  // (cc68 - 10000)(r13)
 
 class MarioActor : public LiveActor {
 public:
@@ -258,15 +259,25 @@ public:
     void rushDropThrowMemoSensor();
     void offTakingFlag();
 
-    const MarioConst& getConst() const { return *mConst; }
+    const MarioConst& getConst() const {
+        return *mConst;
+    }
 
-    inline u32 getHealth() const { return mHealth; }
+    inline u32 getHealth() const {
+        return mHealth;
+    }
 
-    inline const Mario::MovementStates& getMovementStates() const { return mMario->mMovementStates; }
+    inline const Mario::MovementStates& getMovementStates() const {
+        return mMario->mMovementStates;
+    }
 
-    inline const Mario::DrawStates& getDrawStates() const { return mMario->mDrawStates; }
+    inline const Mario::DrawStates& getDrawStates() const {
+        return mMario->mDrawStates;
+    }
 
-    inline const Mario::DrawStates& getPrevDrawStates() const { return mMario->mPrevDrawStates; }
+    inline const Mario::DrawStates& getPrevDrawStates() const {
+        return mMario->mPrevDrawStates;
+    }
 
     struct FBO {
         u32 _0;
@@ -569,7 +580,7 @@ public:
     // padding
     u16 _B74;
     // padding
-    void* mEyeRes;  // 0xB78
+    J3DAnmTexPattern* mEyeRes;  // 0xB78
     u32 _B7C;
     u32 _B80;
     u32 _B84;

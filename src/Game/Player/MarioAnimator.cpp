@@ -1,8 +1,8 @@
 #include "Game/Player/MarioAnimator.hpp"
 #include "Game/Animation/XanimeResource.hpp"
+#include "Game/Player/J3DModelX.hpp"
 #include "Game/Player/MarioActor.hpp"
 #include "Game/Player/MarioConst.hpp"
-#include "Game/Player/J3DModelX.hpp"
 
 #include "Game/Animation/XanimePlayer.hpp"
 #include "Game/LiveActor/HitSensor.hpp"
@@ -224,8 +224,8 @@ bool MarioAnimator::isLandingAnimationRun() const {
         return false;
     }
 
-    if (isAnimationRun("着地") || isAnimationRun("着地B") || isAnimationRun("着地C") ||
-        isAnimationRun("着地ターン") || isAnimationRun("着地幅とび")) {
+    if (isAnimationRun("着地") || isAnimationRun("着地B") || isAnimationRun("着地C") || isAnimationRun("着地ターン") ||
+        isAnimationRun("着地幅とび")) {
         return true;
     }
 
@@ -253,8 +253,8 @@ bool MarioAnimator::isLandingAnimationRun() const {
 }
 
 bool MarioAnimator::isCancelableAnimationRun() const {
-    if (isAnimationRun("着地") || isAnimationRun("着地B") || isAnimationRun("着地C") ||
-        isAnimationRun("着地ターン") || isAnimationRun("着地幅とび")) {
+    if (isAnimationRun("着地") || isAnimationRun("着地B") || isAnimationRun("着地C") || isAnimationRun("着地ターン") ||
+        isAnimationRun("着地幅とび")) {
         return true;
     }
 
@@ -507,7 +507,7 @@ void MarioAnimator::changePickupAnimation(const HitSensor* pSensor) {
     switch (type) {
     case ACTMES_STAR_PIECE_GIFT_MAX:
         mActor->_494 = mActor->_49C;
-        changeAnimation("カブひろい", static_cast<const char*>(nullptr));
+        changeAnimation("カブひろい", static_cast< const char* >(nullptr));
         mActor->changeNullAnimation("カブひろい", -2);
         getPlayer()->stopWalk();
         break;
@@ -520,14 +520,14 @@ void MarioAnimator::changePickupAnimation(const HitSensor* pSensor) {
                 playEffect("ひろいクイック");
                 mActor->clearNullAnimation(-3);
                 startPadVib(2);
-            } else if (getPlayer()->mMovementStates_LOW_WORD & 0x80000000) {
-                if (!(getPlayer()->mMovementStates_LOW_WORD & 0x100000)) {
-                    changeAnimation("ひろい空中", static_cast<const char*>(nullptr));
+            } else if (getPlayer()->mMovementStates._1F) {
+                if (!getPlayer()->mMovementStates._14) {
+                    changeAnimation("ひろい空中", static_cast< const char* >(nullptr));
                     mActor->clearNullAnimation(-3);
                     getPlayer()->stopWalk();
                 }
             } else {
-                changeAnimation("ひろい", static_cast<const char*>(nullptr));
+                changeAnimation("ひろい", static_cast< const char* >(nullptr));
                 mActor->changeNullAnimation("ひろい", -2);
                 getPlayer()->stopWalk();
             }
@@ -544,7 +544,7 @@ void MarioAnimator::changeThrowAnimation(const HitSensor* pSensor) {
     switch (type) {
     case ACTMES_STAR_PIECE_GIFT_MAX:
         stopAnimationUpper(nullptr, nullptr);
-        changeAnimation("両手投げ", static_cast<const char*>(nullptr));
+        changeAnimation("両手投げ", static_cast< const char* >(nullptr));
         startPadVib("マリオ[亀投げ]");
         break;
     case ACTMES_STAR_PIECE_GIFT:
@@ -553,7 +553,7 @@ void MarioAnimator::changeThrowAnimation(const HitSensor* pSensor) {
         if (getPlayer()->isSwimming()) {
             changeAnimation("水泳亀投げ", "水泳基本");
         } else {
-            changeAnimation("投げ", static_cast<const char*>(nullptr));
+            changeAnimation("投げ", static_cast< const char* >(nullptr));
         }
         startPadVib("マリオ[亀投げ]");
         break;
@@ -576,7 +576,7 @@ void MarioAnimator::updateTakingAnimation(const HitSensor* pSensor) {
     u32 type = pSensor->mType;
     switch (type) {
     case ACTMES_STAR_PIECE_GIFT_MAX:
-        stopAnimation(nullptr, static_cast<const char*>(nullptr));
+        stopAnimation(nullptr, static_cast< const char* >(nullptr));
         changeAnimationUpper("カブウエイト", nullptr);
         mActor->clearNullAnimation(0);
         mActor->offTakingFlag();
@@ -614,7 +614,7 @@ HitSensor* MarioActor::getLookTargetSensor() const {
 }
 
 void MarioAnimator::switchMirrorMode() {
-    J3DModelX* model = static_cast<J3DModelX*>(MR::getJ3DModel(mActor));
+    J3DModelX* model = static_cast< J3DModelX* >(MR::getJ3DModel(mActor));
     f32 one = 1.0f;
     if (isMirrorAnimation()) {
         u32* modelFlags = (u32*)&model->mFlags;
@@ -675,7 +675,6 @@ bool MarioAnimator::isMirrorAnimation() {
     if (getPlayer()->mMovementStates._37) {
         if (isAnimationRun("WallSlide") || isAnimationRun("WallKeep") || isAnimationRun("WallWait")) {
             if (!_10C) {
-
                 const TVec3f& frontVec = getPlayer()->mFrontVec;
                 f32 frontDot = camDir.dot(frontVec);
                 if (frontDot > 0.0f) {
@@ -1071,7 +1070,7 @@ void MarioAnimator::update() {
                 if (!mActor->_934) {
                     player = getPlayer();
                     if (player->mMovementStates._1) {
-                        stopAnimation(nullptr, static_cast<const char*>(nullptr));
+                        stopAnimation(nullptr, static_cast< const char* >(nullptr));
                     }
                 }
             }
@@ -1090,7 +1089,7 @@ void MarioAnimator::update() {
         return;
     }
 
-    u8 walkStateTable[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+    u8 walkStateTable[] = {0, 1, 2, 3, 4, 5, 6, 7};
 
     Mario* player = getPlayer();
     u8 prevWalkState = player->_71C;
@@ -1110,7 +1109,7 @@ void MarioAnimator::update() {
             player = getPlayer();
             if (!player->isStatusActive(0xD)) {
                 if (isLandingAnimationRun()) {
-                    stopAnimation(nullptr, static_cast<const char*>(nullptr));
+                    stopAnimation(nullptr, static_cast< const char* >(nullptr));
                 }
 
                 player = getPlayer();
@@ -1121,7 +1120,7 @@ void MarioAnimator::update() {
                 }
 
                 if (isAnimationStop()) {
-                    changeAnimation("基本", static_cast<const char*>(nullptr));
+                    changeAnimation("基本", static_cast< const char* >(nullptr));
                 }
             }
         }
@@ -1135,7 +1134,7 @@ void MarioAnimator::update() {
             player = getPlayer();
             player->_414 = 15;
         } else {
-            stopAnimation("基本", static_cast<const char*>(nullptr));
+            stopAnimation("基本", static_cast< const char* >(nullptr));
         }
     }
 
@@ -1145,12 +1144,12 @@ void MarioAnimator::update() {
 
         player = getPlayer();
         if (player->_71C != 0) {
-            stopAnimation(nullptr, static_cast<const char*>(nullptr));
+            stopAnimation(nullptr, static_cast< const char* >(nullptr));
         }
 
         player = getPlayer();
         if (player->mMovementStates._A) {
-            stopAnimation(nullptr, static_cast<const char*>(nullptr));
+            stopAnimation(nullptr, static_cast< const char* >(nullptr));
         }
         goto afterBrake;
     }
@@ -1228,7 +1227,7 @@ notSquat:
     }
 
     if (isAnimationRun("壁押し")) {
-        stopAnimation(nullptr, static_cast<const char*>(nullptr));
+        stopAnimation(nullptr, static_cast< const char* >(nullptr));
         goto doBrake;
     }
 
@@ -1251,7 +1250,7 @@ notSquat:
         if (isAnimationRun("ターン")) {
             player = getPlayer();
             if (player->_8F0 < 1.0f) {
-                stopAnimation(nullptr, static_cast<const char*>(nullptr));
+                stopAnimation(nullptr, static_cast< const char* >(nullptr));
             }
         } else {
             _15 = 0;
