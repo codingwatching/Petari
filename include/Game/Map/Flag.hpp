@@ -14,4 +14,5 @@ public:
     virtual void appear();
 
     // Members go here...
+    /* 0x8C */ u8 _8C[0xA8];
 };

@@ -38,10 +38,3 @@ public:
     /* 0x20 */ f32 mLoopStartFrame;
     /* 0x24 */ f32 mLoopEndFrame;
 };
-
-inline void JAUSoundAnimator::setLoopFrame(f32 start, f32 end) {
-    mLoopStartFrame = start;
-    mLoopStartSoundIndex = mSoundAnimation->getStartSoundIndex(start);
-    mLoopEndFrame = end;
-    mLoopEndSoundIndex = mSoundAnimation->getEndSoundIndex(end);
-}
