@@ -31,22 +31,6 @@ static void EntryDemo(T* caller, const char* pDemoName, const char* pRootName, c
     }
 }
 
-void Rosetta::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter& rIter) {
-    const char* pObjectName = nullptr;
-
-    if (!MR::getObjectName(&pObjectName, rIter)) {
-        return;
-    }
-
-    for (s32 i = 0; i < pArchiveList->mCount; i++) {
-        if (MR::isEqualString(pArchiveList->getArchive(i), pObjectName)) {
-            return;
-        }
-    }
-
-    pArchiveList->addArchive(pObjectName);
-}
-
 RosettaMonologue::RosettaMonologue() : SimpleLayout("ロゼッタの語り", "PrologueStarSteward", 2, -1), mTextFormer(this, "Text00") {
     MR::createAndAddPaneCtrl(this, "TalkBalloon", 1);
     MR::createAndAddPaneCtrl(this, "CrossFade1", 1);
