@@ -2,6 +2,14 @@
 #include "Game/Map/FileSelectModel.hpp"
 #include "Game/NPC/MiiFaceParts.hpp"
 
+namespace {
+    NEW_NERVE(FileSelectItemNrvNewWait, FileSelectItem, NewWait);
+    NEW_NERVE(FileSelectItemNrvExistWait, FileSelectItem, ExistWait);
+    NEW_NERVE(FileSelectItemNrvFormat, FileSelectItem, Format);
+    NEW_NERVE(FileSelectItemNrvChangeFellow, FileSelectItem, ChangeFellow);
+    NEW_NERVE(FileSelectItemNrvChangeMii, FileSelectItem, ChangeMii);
+};  // namespace
+
 namespace FileSelectItemSub {
     NEW_NERVE(ScaleControllerNrvToSmall, ScaleController, ToSmall);
     NEW_NERVE(ScaleControllerNrvSmall, ScaleController, Small);
@@ -12,11 +20,89 @@ namespace FileSelectItemSub {
     NEW_NERVE(BlinkControllerNrvSleep, BlinkController, Sleep);
     NEW_NERVE(BlinkControllerNrvBlink, BlinkController, Blink);
 
+    ScaleController::ScaleController() : NerveExecutor("ファイルセレクタアイコンサイズ管理") {
+        _8 = 1.0f;
+        initNerve(&FileSelectItemSub::ScaleControllerNrvSmall::sInstance);
+    }
+
+    void ScaleController::exeToSmall() {
+        if (MR::isLessEqualStep(this, 30)) {
+            f32 v = (getNerveStep() / 30.0f);
+            _8 += (v * (1.0f - _8));
+        }
+
+        MR::setNerveAtStep(this, &FileSelectItemSub::ScaleControllerNrvSmall::sInstance, 30);
+    }
+
+    void ScaleController::exeToBig() {
+        if (MR::isLessEqualStep(this, 30)) {
+            f32 v = (getNerveStep() / 30.0f);
+            _8 += v * (1.2f - _8);
+        }
+
+        MR::setNerveAtStep(this, &FileSelectItemSub::ScaleControllerNrvBig::sInstance, 30);
+    }
+
     BlinkController::BlinkController(FileSelectItem* pItem) : NerveExecutor("ファイルセレクタアイコン瞬き管理") {
         mItem = pItem;
         _C = 0;
         _10 = 0;
         initNerve(&FileSelectItemSub::BlinkControllerNrvOpen::sInstance);
+    }
+
+    void BlinkController::exeOpen() {
+        if (MR::isFirstStep(this)) {
+            _C = MR::getRandom(180l, 300l);
+            _10 = 0;
+        }
+
+        f32 v2 = __fabsf(mItem->_160);
+
+        if (v2 > 10.0f) {
+            _10 += 2;
+        } else {
+            if (v2 > 6.0f) {
+                _10++;
+            } else {
+                _10 = 0;
+            }
+        }
+
+        if (_10 > 180) {
+            setNerve(&FileSelectItemSub::BlinkControllerNrvSleep::sInstance);
+        } else {
+            if (MR::isGreaterEqualStep(this, _C)) {
+                setNerve(&FileSelectItemSub::BlinkControllerNrvShut::sInstance);
+            }
+        }
+    }
+
+    void BlinkController::exeShut() {
+        if (MR::isFirstStep(this)) {
+            shut();
+        }
+
+        if (MR::isGreaterEqualStep(this, 10)) {
+            open();
+            setNerve(&FileSelectItemSub::BlinkControllerNrvOpen::sInstance);
+        }
+    }
+
+    void BlinkController::exeSleep() {
+        if (MR::isFirstStep(this)) {
+            sleep();
+            _10 = 0;
+        }
+
+        _10++;
+
+        if (__fabsf(mItem->_160) > 2.0f) {
+            _10 = 0;
+        }
+
+        if (_10 > 60) {
+            setNerve(&FileSelectItemSub::BlinkControllerNrvBlink::sInstance);
+        }
     }
 
     void BlinkController::exeBlink() {
@@ -92,3 +178,12 @@ namespace FileSelectItemSub {
         _8 = 1.0f;
     }
 };  // namespace FileSelectItemSub
+
+FileSelectItem::~FileSelectItem() {
+}
+
+void FileSelectItem::exeExistWait() {
+}
+
+void FileSelectItem::exeNewWait() {
+}
