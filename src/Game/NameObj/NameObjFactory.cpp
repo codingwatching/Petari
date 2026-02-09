@@ -91,6 +91,11 @@ namespace KoopaFunction {
 };
 
 namespace {
+    // FIXME: Polta is being worked on in #1867
+    NameObj* createPoltaStub(const char* pName) {
+        return new NameObj(pName);
+    }
+
     template < typename T >
     NameObj* createCenterOriginCube(const char* pName) {
         return new T(0, pName);
@@ -1457,9 +1462,10 @@ namespace {
             createNameObj< OtaKing >,
             nullptr,
         },
+        // FIXME: Polta is being worked on in #1867
         {
             "Polta",
-            createNameObj< Polta >,
+            createPoltaStub,
             "Polta",
         },
         {

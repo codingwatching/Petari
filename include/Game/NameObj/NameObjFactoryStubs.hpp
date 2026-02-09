@@ -99,7 +99,6 @@
 #include "Game/MapObj/PhantomShipHandle.hpp"
 #include "Game/MapObj/PhantomTorch.hpp"
 #include "Game/MapObj/PlantGroup.hpp"
-#include "Game/Boss/Polta.hpp"
 #include "Game/MapObj/PomponPlant.hpp"
 #include "Game/MapObj/PunchBox.hpp"
 #include "Game/MapObj/QuarterRollGravityRoomArrow.hpp"
