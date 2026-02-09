@@ -51,7 +51,7 @@ void Mario::checkStep() {
         return;
     }
 
-    if (!MR::isNearZero(_184, 0.001f)) {
+    if (!MR::isNearZero(_184)) {
         return;
     }
 
@@ -167,8 +167,8 @@ void Mario::startStep(const TVec3f& rVec) {
             return;
         }
 
-        MtxPtr prevBase = reinterpret_cast< MtxPtr >(_4D8->getPrevBaseMtx());
-        MtxPtr base = reinterpret_cast< MtxPtr >(_4D8->getBaseMtx());
+        MtxPtr prevBase = reinterpret_cast<MtxPtr>(_4D8->getPrevBaseMtx());
+        MtxPtr base = reinterpret_cast<MtxPtr>(_4D8->getBaseMtx());
 
         if (!MR::isSameMtx(base, prevBase) && _4D8->mSensor != mGroundPolygon->mSensor) {
             return;
@@ -203,7 +203,7 @@ bool MarioStep::start() {
     _14 = v3;
 
     if (isAnimationRun(nullptr) && !mActor->_3E5) {
-        stopAnimation(nullptr, (const char*)nullptr);
+        stopAnimation(nullptr, static_cast<const char*>(nullptr));
     }
 
     return true;

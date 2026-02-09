@@ -80,7 +80,7 @@ void Mario::calcMoveDir2D(f32 a1, f32 a2, TVec3f* pOut) {
         MR::vecBlendSphere(_398, stack_50, &_398, 0.1f);
     }
 
-    if (MR::isNearZero(_398, 0.001f)) {
+    if (MR::isNearZero(_398)) {
         _398 = stack_44;
     } else {
         MR::normalize(&_398);
@@ -142,7 +142,7 @@ void Mario::stick2Dadjust(f32& rStickX, f32& rStickY) {
     bool isNearHalfPi = false;
 
     if (_66C) {
-        if (MR::isNearZero(mStickPos.z, 0.001f)) {
+        if (MR::isNearZero(mStickPos.z)) {
             _66C = 0;
         } else {
             TVec3f stickVec(rStickX, rStickY, 0.0f);
@@ -161,7 +161,7 @@ void Mario::stick2Dadjust(f32& rStickX, f32& rStickY) {
         }
     }
 
-    if (!_66C && !MR::isNearZero(mStickPos.z, 0.001f) && !_60E && !_60F) {
+    if (!_66C && !MR::isNearZero(mStickPos.z) && !_60E && !_60F) {
         TVec3f stickVec(rStickX, rStickY, 0.0f);
         PSMTXMultVecSR(_F4, &stickVec, &stickVec);
         PSMTXMultVecSR(rotMtx, &stickVec, &stickVec);
