@@ -2,6 +2,7 @@
 
 #include "Game/LiveActor/LiveActor.hpp"
 
+
 class Flag : public LiveActor {
 public:
     Flag(const char*);
@@ -15,4 +16,5 @@ public:
 
     // Members go here...
     /* 0x8C */ u8 _8C[0xA8];
+
 };

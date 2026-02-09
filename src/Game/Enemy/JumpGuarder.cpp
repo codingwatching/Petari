@@ -1,4 +1,5 @@
 #include "Game/Enemy/JumpGuarder.hpp"
+#include "Game/Util.hpp"
 #include "Game/Util/PlayerUtil.hpp"
 #include "JSystem/JMath/JMath.hpp"
 
@@ -63,3 +64,7 @@ void JumpEmitter::endEventCamera() {
 }
 
 // JumpEmitter::updateRotate
+
+
+JumpGuarder::JumpGuarder(const char* pName) : NameObj(pName) {}
+JumpGuarder::~JumpGuarder() {}
