@@ -136,7 +136,7 @@ public:
 
     FileSelectCameraController* mCameraController;  // 0x8C
     FileSelectSky* mSky;                            // 0x90
-    DeriveActorGroup< FileSelectItem > mItems;      // 0x94
+    DeriveActorGroup< FileSelectItem >* mItems;     // 0x94
     TVec3f* _98;
     FileSelectButton* mSelectButton;    // 0x9C
     BackButton* mBackButton;            // 0xA0
@@ -153,10 +153,11 @@ public:
     void* _CC;
     TitleSequenceProduct* mTitleSeq;  // 0xD0
     MiiSelect* mMiiSelect;            // 0xD4
-    MiiConfirmIcon* mMiiConirmIcon;   // 0xD8
+    MiiConfirmIcon* mMiiConfirmIcon;  // 0xD8
     void* _DC;
     Manual2P* mManual2P;  // 0xE0
     u32 _E4;
+    u32 _E8;
     FileSelectEffect* mSelectEffects;  // 0xEC
     nw4r::ut::ResFont* mFont;          // 0xF0
 };
