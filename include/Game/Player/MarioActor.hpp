@@ -190,6 +190,7 @@ public:
     bool tryStandardRush();
     void checkPriorRushTarget();
     u8 selectAction(const char*) const;
+    bool selectInvalidMovingCollision(const char*) const;
     bool tryRushInRush();
     void bodyClap();
     bool selectWaterInOut(const char*) const;

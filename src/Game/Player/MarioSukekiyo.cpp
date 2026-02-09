@@ -20,7 +20,7 @@ MarioBury::MarioBury(MarioActor* pActor) : MarioSukekiyo(pActor) {
 bool MarioSukekiyo::close() {
     getPlayer()->stopWalk();
     mActor->_F44 = 1;
-    stopAnimation(nullptr, "基本");
+    stopAnimation(static_cast< const char* >(nullptr), "基本");
     return true;
 }
 
@@ -88,3 +88,16 @@ bool MarioSukekiyo::update() {
 
     return true;
 }
+
+namespace NrvMarioActor {
+    INIT_NERVE(MarioActorNrvWait);
+    INIT_NERVE(MarioActorNrvGameOver);
+    INIT_NERVE(MarioActorNrvGameOverAbyss);
+    INIT_NERVE(MarioActorNrvGameOverAbyss2);
+    INIT_NERVE(MarioActorNrvGameOverFire);
+    INIT_NERVE(MarioActorNrvGameOverBlackHole);
+    INIT_NERVE(MarioActorNrvGameOverNonStop);
+    INIT_NERVE(MarioActorNrvGameOverSink);
+    INIT_NERVE(MarioActorNrvTimeWait);
+    INIT_NERVE(MarioActorNrvNoRush);
+};  // namespace NrvMarioActor

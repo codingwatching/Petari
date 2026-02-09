@@ -411,10 +411,10 @@ public:
     void recordLastGround();
     void getLastGroundPos(TVec3f*) const;
     const TVec3f* getLastGroundEdgeNrm(u32) const;
-    void getLastGroundEdgeIndex(const TVec3f&, const TVec3f&) const;
+    u32 getLastGroundEdgeIndex(const TVec3f&, const TVec3f&) const;
     void pushedByReaction();
     void addReaction(const TVec3f&);
-    bool tryPushToVelocity();
+    void tryPushToVelocity();
     void push(const TVec3f&);
     void push2(const TVec3f&);
     void powerAreaMove();
