@@ -8,7 +8,7 @@ GhostPlayer::~GhostPlayer() {}
 
 void GhostPlayer::makeArchiveList(NameObjArchiveListCollector* pArchiveList, const JMapInfoIter&) {
     char archiveName[0x100];
-    MR::copyString(archiveName, "GhostData", 0x100);
+    strcpy(archiveName, "GhostData");
     strcat(archiveName, MR::getCurrentStageName());
     pArchiveList->addArchive(archiveName);
 
