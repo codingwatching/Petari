@@ -94,7 +94,7 @@ public:
     void exeNewWait();
 
     bool _8C;
-    u32 _90;
+    PartsModel* mPlanetMapObj;  // 0x90
     FileSelectIconID* mIconID;  // 0x94
     FileSelectModel** mModels;  // 0x98
     MiiFaceParts* mFaceParts;   // 0x9C
@@ -115,8 +115,7 @@ public:
     u8 _155;
     u8 _156;
     u8 _157;
-    f32 _158;
-    f32 _15C;
+    TVec2f _158;
     f32 _160;
     bool mIsInvalidRotate;  // 0x164
     u8 _165;
