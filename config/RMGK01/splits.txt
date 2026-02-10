@@ -2049,7 +2049,7 @@ Game/Camera/CameraSubjective.cpp:
 
 Game/Camera/CameraTalk.cpp:
 	.text       start:0x800AF408 end:0x800AFBA4
-	.data       start:0x80576368 end:0x805763D8
+	.data       start:0x80576368 end:0x805763C0
 	.sdata2     start:0x806B9938 end:0x806B9970
 
 Game/Camera/CameraTargetArg.cpp:
@@ -2058,7 +2058,7 @@ Game/Camera/CameraTargetArg.cpp:
 
 Game/Camera/CameraTargetHolder.cpp:
 	.text       start:0x800AFCCC end:0x800AFEAC
-	.data       start:0x805763D8 end:0x805763E8
+	.data       start:0x805763C0 end:0x805763E8
 	.sdata2     start:0x806B9970 end:0x806B9978
 
 Game/Camera/CameraTargetMtx.cpp:
