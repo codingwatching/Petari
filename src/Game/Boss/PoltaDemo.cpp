@@ -49,7 +49,7 @@ void PoltaDemo::startTryDemo(const char* pDemoName, const Nerve* pDemoNerve) {
     appear();
     mCurDemoNerve = pDemoNerve;
     mCurDemoName = pDemoName;
-    if (MR::tryStartDemoMarioPuppetable(mPoltaPtr, pDemoName)) {
+    if (MR::tryStartDemoMarioPuppetable(getHost(), pDemoName)) {
         startDemoSetting();
         return;
     }
@@ -57,24 +57,24 @@ void PoltaDemo::startTryDemo(const char* pDemoName, const Nerve* pDemoNerve) {
 }
 
 void PoltaDemo::exeTryStartDemo() {
-    if (MR::tryStartDemoMarioPuppetable(mPoltaPtr, mCurDemoName)) {
+    if (MR::tryStartDemoMarioPuppetable(getHost(), mCurDemoName)) {
         startDemoSetting();
     }
 }
 
 void PoltaDemo::exeOpeningDemo() {
     if (MR::isFirstStep(this)) {
-        MR::showModel(mPoltaPtr);
-        PoltaFunction::killGroundRock(mPoltaPtr);
-        mPoltaPtr->setStartPose();
+        MR::showModel(getHost());
+        PoltaFunction::killGroundRock(getHost());
+        getHost()->setStartPose();
         MR::stopStageBGM(60);
-        MR::startAnimCameraTargetSelf(mPoltaPtr, mPoltaPtr->mCameraInfo, "OpeningDemo", 0, 1.0f);
-        MR::startAction(mPoltaPtr, "OpeningDemo");
+        MR::startAnimCameraTargetSelf(getHost(), getHost()->mCameraInfo, "OpeningDemo", 0, 1.0f);
+        MR::startAction(getHost(), "OpeningDemo");
         MR::startBckPlayer("BattleWait", (const char*)nullptr);
-        PoltaFunction::onMovement(mPoltaPtr);
+        PoltaFunction::onMovement(getHost());
         MR::setPlayerPos("ポルタ開始デモプレイヤー位置");
-        mPoltaPtr->mFormationModel->appear();
-        MR::startAction(mPoltaPtr->mFormationModel, "OpeningDemo");
+        getHost()->mFormationModel->appear();
+        MR::startAction(getHost()->mFormationModel, "OpeningDemo");
     }
 
     if (MR::isStep(this, 300)) {
@@ -85,68 +85,68 @@ void PoltaDemo::exeOpeningDemo() {
         MR::startStageBGM("MBGM_BOSS_09_A", false);
     }
 
-    if (MR::isActionEnd(mPoltaPtr)) {
-        MR::endAnimCamera(mPoltaPtr, mPoltaPtr->mCameraInfo, "OpeningDemo", -1, true);
-        MR::endDemo(mPoltaPtr, "ポルタ開始デモ");
-        mPoltaPtr->mFormationModel->kill();
+    if (MR::isActionEnd(getHost())) {
+        MR::endAnimCamera(getHost(), getHost()->mCameraInfo, "OpeningDemo", -1, true);
+        MR::endDemo(getHost(), "ポルタ開始デモ");
+        getHost()->mFormationModel->kill();
         kill();
     }
 }
 
 void PoltaDemo::exePowerUpDemo() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::killGroundRock(mPoltaPtr);
-        mPoltaPtr->setStartPose();
-        MR::invalidateShadowAll(mPoltaPtr->mLeftArm);
-        MR::invalidateShadowAll(mPoltaPtr->mRightArm);
+        PoltaFunction::killGroundRock(getHost());
+        getHost()->setStartPose();
+        MR::invalidateShadowAll(getHost()->mLeftArm);
+        MR::invalidateShadowAll(getHost()->mRightArm);
         MR::stopStageBGM(60);
-        PoltaFunction::onMovement(mPoltaPtr);
-        PoltaFunction::startArm(mPoltaPtr);
-        MR::startAnimCameraTargetSelf(mPoltaPtr, mPoltaPtr->mCameraInfo, "PowerUpDemo", 0, 1.0f);
-        MR::startAction(mPoltaPtr, "PowerUpDemo");
-        MR::startAction(PoltaFunction::getLeftArmActor(mPoltaPtr), "PowerUpDemo");
-        MR::startAction(PoltaFunction::getRightArmActor(mPoltaPtr), "PowerUpDemo");
+        PoltaFunction::onMovement(getHost());
+        PoltaFunction::startArm(getHost());
+        MR::startAnimCameraTargetSelf(getHost(), getHost()->mCameraInfo, "PowerUpDemo", 0, 1.0f);
+        MR::startAction(getHost(), "PowerUpDemo");
+        MR::startAction(PoltaFunction::getLeftArmActor(getHost()), "PowerUpDemo");
+        MR::startAction(PoltaFunction::getRightArmActor(getHost()), "PowerUpDemo");
         MR::startBckPlayer("BattleWait", (const char*)nullptr);
         MR::setPlayerPos("ポルタデモプレイヤー位置");
-        mPoltaPtr->mFormationModel->appear();
-        mPoltaPtr->mLeftArm->mFormationModel->appear();
-        mPoltaPtr->mRightArm->mFormationModel->appear();
-        MR::startAction(mPoltaPtr->mFormationModel, "PowerUpDemo");
-        MR::startAction(mPoltaPtr->mLeftArm->mFormationModel, "PowerUpDemoArmL");
-        MR::startAction(mPoltaPtr->mRightArm->mFormationModel, "PowerUpDemoArmR");
+        getHost()->mFormationModel->appear();
+        getHost()->mLeftArm->mFormationModel->appear();
+        getHost()->mRightArm->mFormationModel->appear();
+        MR::startAction(getHost()->mFormationModel, "PowerUpDemo");
+        MR::startAction(getHost()->mLeftArm->mFormationModel, "PowerUpDemoArmL");
+        MR::startAction(getHost()->mRightArm->mFormationModel, "PowerUpDemoArmR");
     }
 
     if (MR::isStep(this, 530)) {
         MR::startCenterScreenBlur(80, 20.0f, 80, 5, 40);
     }
-    if (MR::isActionEnd(mPoltaPtr)) {
-        MR::endDemo(mPoltaPtr, "ポルタパワーアップデモ");
-        MR::endAnimCamera(mPoltaPtr, mPoltaPtr->mCameraInfo, "PowerUpDemo", -1, true);
+    if (MR::isActionEnd(getHost())) {
+        MR::endDemo(getHost(), "ポルタパワーアップデモ");
+        MR::endAnimCamera(getHost(), getHost()->mCameraInfo, "PowerUpDemo", -1, true);
         MR::startStageBGM("MBGM_BOSS_09_B", false);
-        MR::validateShadowAll(mPoltaPtr->mLeftArm);
-        MR::validateShadowAll(mPoltaPtr->mRightArm);
-        mPoltaPtr->mFormationModel->kill();
-        mPoltaPtr->mLeftArm->mFormationModel->kill();
-        mPoltaPtr->mRightArm->mFormationModel->kill();
+        MR::validateShadowAll(getHost()->mLeftArm);
+        MR::validateShadowAll(getHost()->mRightArm);
+        getHost()->mFormationModel->kill();
+        getHost()->mLeftArm->mFormationModel->kill();
+        getHost()->mRightArm->mFormationModel->kill();
         kill();
     }
 }
 
 void PoltaDemo::exeDownDemo() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::killGroundRock(mPoltaPtr);
-        mPoltaPtr->setStartPose();
+        PoltaFunction::killGroundRock(getHost());
+        getHost()->setStartPose();
         MR::stopStageBGM(30);
-        MR::startAnimCameraTargetSelf(mPoltaPtr, mPoltaPtr->mCameraInfo, "DownDemo", 0, 1.0f);
-        MR::startAction(mPoltaPtr, "DownDemo");
+        MR::startAnimCameraTargetSelf(getHost(), getHost()->mCameraInfo, "DownDemo", 0, 1.0f);
+        MR::startAction(getHost(), "DownDemo");
         MR::startBckPlayer("BattleWait", (const char*)nullptr);
-        PoltaFunction::onMovement(mPoltaPtr);
+        PoltaFunction::onMovement(getHost());
         MR::setPlayerPos("ポルタデモプレイヤー位置");
     }
-    if (MR::isActionEnd(mPoltaPtr)) {
-        MR::endDemo(mPoltaPtr, "ポルタダウンデモ");
-        MR::endAnimCamera(mPoltaPtr, mPoltaPtr->mCameraInfo, "DownDemo", -1, true);
-        mPoltaPtr->kill();
+    if (MR::isActionEnd(getHost())) {
+        MR::endDemo(getHost(), "ポルタダウンデモ");
+        MR::endAnimCamera(getHost(), getHost()->mCameraInfo, "DownDemo", -1, true);
+        getHost()->kill();
         kill();
     }
 }
