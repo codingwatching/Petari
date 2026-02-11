@@ -2,12 +2,12 @@
 #include "Game/Animation/BckCtrl.hpp"
 #include "Game/Animation/XanimeCore.hpp"
 #include "Game/AudioLib/AudAnmSoundObject.hpp"
-#include "Game/LiveActor/ActorLightCtrl.hpp"
 #include "Game/LiveActor/ActorAnimKeeper.hpp"
-#include "Game/LiveActor/DisplayListMaker.hpp"
+#include "Game/LiveActor/ActorLightCtrl.hpp"
 #include "Game/LiveActor/Binder.hpp"
 #include "Game/LiveActor/ClippingActorHolder.hpp"
 #include "Game/LiveActor/ClippingDirector.hpp"
+#include "Game/LiveActor/DisplayListMaker.hpp"
 #include "Game/LiveActor/HitSensor.hpp"
 #include "Game/LiveActor/LiveActor.hpp"
 #include "Game/LiveActor/LiveActorGroup.hpp"
@@ -18,15 +18,18 @@
 #include "Game/LiveActor/ModelObj.hpp"
 #include "Game/LiveActor/PartsModel.hpp"
 #include "Game/Map/CollisionParts.hpp"
+#include "Game/Map/Flag.hpp"
 #include "Game/Map/HitInfo.hpp"
 #include "Game/Map/LightFunction.hpp"
-#include "Game/NameObj/NameObjFinder.hpp"
-#include "Game/NameObj/NameObjExecuteHolder.hpp"
 #include "Game/NameObj/NameObj.hpp"
+#include "Game/NameObj/NameObjExecuteHolder.hpp"
+#include "Game/NameObj/NameObjFinder.hpp"
+#include "Game/Player/GroupChecker.hpp"
+#include "Game/Scene/SceneFunction.hpp"
 #include "Game/Scene/SceneObjHolder.hpp"
 #include "Game/System/ResourceHolder.hpp"
-#include "Game/Util/ActorSensorUtil.hpp"
 #include "Game/Util/ActorMovementUtil.hpp"
+#include "Game/Util/ActorSensorUtil.hpp"
 #include "Game/Util/AreaObjUtil.hpp"
 #include "Game/Util/GravityUtil.hpp"
 #include "Game/Util/JMapUtil.hpp"
@@ -34,8 +37,8 @@
 #include "Game/Util/MathUtil.hpp"
 #include "Game/Util/ModelUtil.hpp"
 #include "Game/Util/ObjUtil.hpp"
-#include "Inline.hpp"
 #include "Game/Util/ScreenUtil.hpp"
+#include "Inline.hpp"
 #include <JSystem/J3DGraphBase/J3DTexture.hpp>
 #include <JSystem/JAudio2/JAUSoundAnimator.hpp>
 #include <JSystem/JUtility/JUTNameTab.hpp>
@@ -43,31 +46,14 @@
 #include <cstring>
 #include <new>
 
-class GroupCheckManager {
-public:
-    void add(const NameObj*, long);
-    bool isExist(const NameObj*, long) const;
-};
-
-class Flag {
-public:
-    Flag(const char*);
-    void setInfoPos(const char*, const TVec3f*, const TVec3f&, f32, f32, f32, s32, s32, f32);
-};
-
-extern Flag* __ct__4FlagFPCc(Flag*, const char*);
-
-class JAUSoundAnimation {
-public:
-    u32 getStartSoundIndex(f32) const;
-    u32 getEndSoundIndex(f32) const;
-};
-
 class CollisionPartsFilterActor : public CollisionPartsFilterBase {
 public:
-    CollisionPartsFilterActor(const LiveActor* pActor) : mActor(pActor) {}
+    CollisionPartsFilterActor(const LiveActor* pActor) : mActor(pActor) {
+    }
 
-    virtual bool isInvalidParts(const CollisionParts* pParts) const { return pParts->mHitSensor->mHost == mActor; }
+    virtual bool isInvalidParts(const CollisionParts* pParts) const {
+        return pParts->mHitSensor->mHost == mActor;
+    }
 
     const LiveActor* mActor;
 };
@@ -133,8 +119,6 @@ namespace {
         return parts;
     }
 
-    volatile void* sCreateSubModelAddr = (void*)createSubModel;
-
     void changeBckForEffectKeeper(const LiveActor* pActor) NO_INLINE {
         EffectKeeper* keeper = pActor->mEffectKeeper;
         if (keeper != nullptr) {
@@ -162,7 +146,7 @@ namespace {
     }
 
     void callFuncAllGroupMember(const LiveActor* pActor, void (*pFunc)(LiveActor*)) NO_INLINE {
-        LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)MR::getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+        LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
         LiveActorGroup* pGroup = pGroupArray->getLiveActorGroup(pActor);
         if (pGroup == nullptr) {
             return;
@@ -179,7 +163,7 @@ namespace {
     }
 
     void callMethodAllGroupMember(const LiveActor* pActor, void (LiveActor::*pMethod)()) NO_INLINE {
-        LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)MR::getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+        LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
         LiveActorGroup* pGroup = pGroupArray->getLiveActorGroup(pActor);
         if (pGroup == nullptr) {
             return;
@@ -199,8 +183,8 @@ namespace {
     s32 countGroupMember(const LiveActor* pActor, T pPred) NO_INLINE;
 
     template <>
-    s32 countGroupMember<bool (*)(LiveActor*)>(const LiveActor* pActor, bool (*pPred)(LiveActor*)) NO_INLINE {
-        LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)MR::getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+    s32 countGroupMember< bool (*)(LiveActor*) >(const LiveActor* pActor, bool (*pPred)(LiveActor*)) NO_INLINE {
+        LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
         LiveActorGroup* pGroup = pGroupArray->getLiveActorGroup(pActor);
         s32 count = 0;
         if (pGroup == nullptr) {
@@ -222,8 +206,8 @@ namespace {
     }
 
     template <>
-    s32 countGroupMember<bool (*)(const LiveActor*)>(const LiveActor* pActor, bool (*pPred)(const LiveActor*)) NO_INLINE {
-        LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)MR::getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+    s32 countGroupMember< bool (*)(const LiveActor*) >(const LiveActor* pActor, bool (*pPred)(const LiveActor*)) NO_INLINE {
+        LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
         LiveActorGroup* pGroup = pGroupArray->getLiveActorGroup(pActor);
         s32 count = 0;
         if (pGroup == nullptr) {
@@ -1244,7 +1228,7 @@ namespace MR {
 
         s32 groupId;
         if (getJMapInfoGroupID(rIter, &groupId)) {
-            LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+            LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
             return (MsgSharedGroup*)pGroupArray->entry(pActor, rIter, pName, maxCount);
         }
 
@@ -1252,7 +1236,7 @@ namespace MR {
     }
 
     LiveActorGroup* getGroupFromArray(const LiveActor* pActor) {
-        LiveActorGroupArray* pGroupArray = (LiveActorGroupArray*)getSceneObjHolder()->getObj(SceneObj_LiveActorGroupArray);
+        LiveActorGroupArray* pGroupArray = MR::getSceneObj< LiveActorGroupArray >(SceneObj_LiveActorGroupArray);
         return pGroupArray->getLiveActorGroup(pActor);
     }
 
@@ -1304,22 +1288,22 @@ namespace MR {
     }
 
     void addToAttributeGroupSearchTurtle(const LiveActor* pActor) {
-        GroupCheckManager* pGroup = (GroupCheckManager*)getSceneObjHolder()->getObj(0x66);
+        GroupCheckManager* pGroup = MR::getSceneObj< GroupCheckManager >(SceneObj_GroupCheckManager);
         pGroup->add(pActor, 0);
     }
 
     void addToAttributeGroupReflectSpinningBox(const LiveActor* pActor) {
-        GroupCheckManager* pGroup = (GroupCheckManager*)getSceneObjHolder()->getObj(0x66);
+        GroupCheckManager* pGroup = MR::getSceneObj< GroupCheckManager >(SceneObj_GroupCheckManager);
         pGroup->add(pActor, 1);
     }
 
     bool isExistInAttributeGroupSearchTurtle(const LiveActor* pActor) {
-        GroupCheckManager* pGroup = (GroupCheckManager*)getSceneObjHolder()->getObj(0x66);
+        GroupCheckManager* pGroup = MR::getSceneObj< GroupCheckManager >(SceneObj_GroupCheckManager);
         return pGroup->isExist(pActor, 0);
     }
 
     bool isExistInAttributeGroupReflectSpinningBox(const LiveActor* pActor) {
-        GroupCheckManager* pGroup = (GroupCheckManager*)getSceneObjHolder()->getObj(0x66);
+        GroupCheckManager* pGroup = MR::getSceneObj< GroupCheckManager >(SceneObj_GroupCheckManager);
         return pGroup->isExist(pActor, 1);
     }
 
@@ -1752,21 +1736,21 @@ namespace MR {
             }
 
             J3DTexture* pTexture = pModelData->mMaterialTable.getTexture();
-            u32 texOffset = static_cast<u32>(texIndex) << 5;
-            const u8* pSrc = reinterpret_cast<const u8*>(&rTimg);
-            u8* pBase = reinterpret_cast<u8*>(pTexture->getResTIMG(0));
+            u32 texOffset = static_cast< u32 >(texIndex) << 5;
+            const u8* pSrc = reinterpret_cast< const u8* >(&rTimg);
+            u8* pBase = reinterpret_cast< u8* >(pTexture->getResTIMG(0));
             pBase[texOffset] = pSrc[0];
 
             u8* pDst = pBase + texOffset;
             pDst[0x01] = pSrc[0x01];
-            *reinterpret_cast<u16*>(pDst + 0x02) = *reinterpret_cast<const u16*>(pSrc + 0x02);
-            *reinterpret_cast<u16*>(pDst + 0x04) = *reinterpret_cast<const u16*>(pSrc + 0x04);
+            *reinterpret_cast< u16* >(pDst + 0x02) = *reinterpret_cast< const u16* >(pSrc + 0x02);
+            *reinterpret_cast< u16* >(pDst + 0x04) = *reinterpret_cast< const u16* >(pSrc + 0x04);
             pDst[0x06] = pSrc[0x06];
             pDst[0x07] = pSrc[0x07];
             pDst[0x08] = pSrc[0x08];
             pDst[0x09] = pSrc[0x09];
-            *reinterpret_cast<u16*>(pDst + 0x0A) = *reinterpret_cast<const u16*>(pSrc + 0x0A);
-            *reinterpret_cast<u32*>(pDst + 0x0C) = *reinterpret_cast<const u32*>(pSrc + 0x0C);
+            *reinterpret_cast< u16* >(pDst + 0x0A) = *reinterpret_cast< const u16* >(pSrc + 0x0A);
+            *reinterpret_cast< u32* >(pDst + 0x0C) = *reinterpret_cast< const u32* >(pSrc + 0x0C);
             pDst[0x10] = pSrc[0x10];
             pDst[0x11] = pSrc[0x11];
             pDst[0x12] = pSrc[0x12];
@@ -1777,20 +1761,20 @@ namespace MR {
             pDst[0x17] = pSrc[0x17];
             pDst[0x18] = pSrc[0x18];
             pDst[0x19] = pSrc[0x19];
-            *reinterpret_cast<s16*>(pDst + 0x1A) = *reinterpret_cast<const s16*>(pSrc + 0x1A);
-            *reinterpret_cast<u32*>(pDst + 0x1C) = *reinterpret_cast<const u32*>(pSrc + 0x1C);
+            *reinterpret_cast< s16* >(pDst + 0x1A) = *reinterpret_cast< const s16* >(pSrc + 0x1A);
+            *reinterpret_cast< u32* >(pDst + 0x1C) = *reinterpret_cast< const u32* >(pSrc + 0x1C);
 
-            pBase = reinterpret_cast<u8*>(pTexture->getResTIMG(0));
+            pBase = reinterpret_cast< u8* >(pTexture->getResTIMG(0));
             u8* pPal = pBase + texOffset;
-            u32 palOffset = *reinterpret_cast<u32*>(pPal + 0x1C);
-            palOffset = (palOffset + reinterpret_cast<u32>(pSrc)) - reinterpret_cast<u32>(pPal);
-            *reinterpret_cast<u32*>(pPal + 0x1C) = palOffset;
+            u32 palOffset = *reinterpret_cast< u32* >(pPal + 0x1C);
+            palOffset = (palOffset + reinterpret_cast< u32 >(pSrc)) - reinterpret_cast< u32 >(pPal);
+            *reinterpret_cast< u32* >(pPal + 0x1C) = palOffset;
 
-            pBase = reinterpret_cast<u8*>(pTexture->getResTIMG(0));
+            pBase = reinterpret_cast< u8* >(pTexture->getResTIMG(0));
             u8* pImg = pBase + texOffset;
-            u32 imgOffset = *reinterpret_cast<u32*>(pImg + 0x0C);
-            imgOffset = (imgOffset + reinterpret_cast<u32>(pSrc)) - reinterpret_cast<u32>(pImg);
-            *reinterpret_cast<u32*>(pImg + 0x0C) = imgOffset;
+            u32 imgOffset = *reinterpret_cast< u32* >(pImg + 0x0C);
+            imgOffset = (imgOffset + reinterpret_cast< u32 >(pSrc)) - reinterpret_cast< u32 >(pImg);
+            *reinterpret_cast< u32* >(pImg + 0x0C) = imgOffset;
 
             for (u16 matIndex = 0; matIndex < pModelData->mMaterialTable.getMaterialNum(); matIndex++) {
                 J3DMaterial* material = pModelData->mMaterialTable.getMaterialNodePointer(matIndex);
@@ -2356,7 +2340,8 @@ namespace MR {
         return createCollisionParts(getResourceHolder(pActor), pName, pSensor, mtx, scaleType, 0);
     }
 
-    CollisionParts* createCollisionPartsFromLiveActor(LiveActor* pActor, const char* pName, HitSensor* pSensor, MtxPtr pMtx, CollisionScaleType scaleType) {
+    CollisionParts* createCollisionPartsFromLiveActor(LiveActor* pActor, const char* pName, HitSensor* pSensor, MtxPtr pMtx,
+                                                      CollisionScaleType scaleType) {
         TPos3f mtx;
         mtx.set(pMtx);
         CollisionParts* pParts = createCollisionParts(getResourceHolder(pActor), pName, pSensor, mtx, scaleType, 0);
@@ -2364,8 +2349,8 @@ namespace MR {
         return pParts;
     }
 
-    CollisionParts* createCollisionPartsFromResourceHolder(
-        ResourceHolder* pResHolder, const char* pName, HitSensor* pSensor, const TPos3f& rMtx, CollisionScaleType scaleType) {
+    CollisionParts* createCollisionPartsFromResourceHolder(ResourceHolder* pResHolder, const char* pName, HitSensor* pSensor, const TPos3f& rMtx,
+                                                           CollisionScaleType scaleType) {
         return createCollisionParts(pResHolder, pName, pSensor, rMtx, scaleType, 0);
     }
 
@@ -2581,99 +2566,99 @@ namespace MR {
     }
 
     ModelObj* createModelObjMapObj(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 8, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_MapObj, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjMapObjStrongLight(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 10, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_MapObjStrongLight, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjNoSilhouettedMapObj(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 13, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_NoSilhouettedMapObj, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjNoSilhouettedMapObjStrongLight(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 15, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_NoSilhouettedMapObjStrongLight, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjIndirectMapObj(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 25, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_IndirectMapObj, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjPlayerDecoration(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 21, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_PlayerDecoration, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjEnemy(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 18, 43, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_Enemy, MR::MovementType_EnemyDecoration, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjNpc(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 16, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_NPC, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjPlanetLow(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 5, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_PlanetLow, -2, -2, false);
         pObj->initWithoutIter();
         return pObj;
     }
 
     ModelObj* createModelObjBloomModel(const char* pName, const char* pModelName, MtxPtr pMtx) {
-        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, 30, -2, -2, false);
+        ModelObj* pObj = new ModelObj(pName, pModelName, pMtx, MR::DrawBufferType_BloomModel, -2, -2, false);
         pObj->initWithoutIter();
         registerDemoSimpleCastAll(pObj);
         return pObj;
     }
 
     PartsModel* createPartsModelMapObj(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 8, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_MapObj, false);
         pModel->initWithoutIter();
         return pModel;
     }
 
     PartsModel* createPartsModelMapObjStrongLight(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 10, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_MapObjStrongLight, false);
         pModel->initWithoutIter();
         return pModel;
     }
 
     PartsModel* createPartsModelNoSilhouettedMapObj(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 13, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_NoSilhouettedMapObj, false);
         pModel->initWithoutIter();
         return pModel;
     }
 
     PartsModel* createPartsModelEnemy(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 18, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_Enemy, false);
         pModel->initWithoutIter();
         return pModel;
     }
 
     PartsModel* createPartsModelNpc(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 16, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_NPC, false);
         pModel->initWithoutIter();
         pModel->_99 = true;
         return pModel;
     }
 
     PartsModel* createPartsModelIndirectNpc(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 27, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_IndirectNpc, false);
         pModel->initWithoutIter();
         pModel->_99 = true;
         return pModel;
@@ -2681,14 +2666,14 @@ namespace MR {
 
     PartsModel* createPartsModelEnemyAndFix(LiveActor* pHost, const char* pName, const char* pModelName, MtxPtr pMtx, const TVec3f& rPos,
                                             const TVec3f& rRot, const char* pJointName) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, 18, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, pMtx, MR::DrawBufferType_Enemy, false);
         pModel->initFixedPosition(rPos, rRot, pJointName);
         pModel->initWithoutIter();
         return pModel;
     }
 
     PartsModel* createPartsModelNpcAndFix(LiveActor* pHost, const char* pName, const char* pModelName, const char* pJointName) {
-        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, nullptr, 16, false);
+        PartsModel* pModel = new PartsModel(pHost, pName, pModelName, nullptr, MR::DrawBufferType_NPC, false);
         pModel->initFixedPosition(pJointName);
         pModel->initWithoutIter();
         pModel->_99 = true;
@@ -2697,7 +2682,7 @@ namespace MR {
 
     LodCtrl* createLodCtrlNPC(LiveActor* pActor, const JMapInfoIter& rIter) {
         LodCtrl* pLod = new LodCtrl(pActor, rIter);
-        pLod->createLodModel(16, 40, -1);
+        pLod->createLodModel(MR::DrawBufferType_NPC, MR::MovementType_NPC, -1);
         pLod->syncMaterialAnimation();
         pLod->syncJointAnimation();
         pLod->initLightCtrl();
@@ -2708,7 +2693,7 @@ namespace MR {
 
     LodCtrl* createLodCtrlPlanet(LiveActor* pActor, const JMapInfoIter& rIter, f32 farClip, s32 lowModelType) {
         LodCtrl* pLod = new LodCtrl(pActor, rIter);
-        pLod->createLodModel(5, lowModelType, 1);
+        pLod->createLodModel(MR::DrawBufferType_PlanetLow, lowModelType, MR::DrawBufferType_Sky);
         pLod->setDistanceToMiddleAndLow(5000.0f, 10000.0f);
         pLod->setFarClipping(farClip);
 
@@ -2727,7 +2712,7 @@ namespace MR {
 
     LodCtrl* createLodCtrlMapObj(LiveActor* pActor, const JMapInfoIter& rIter, f32 farClip) {
         LodCtrl* pLod = new LodCtrl(pActor, rIter);
-        pLod->createLodModel(8, -1, 5);
+        pLod->createLodModel(MR::DrawBufferType_MapObj, -1, MR::DrawBufferType_PlanetLow);
         pLod->setDistanceToMiddleAndLow(5000.0f, 10000.0f);
         pLod->setFarClipping(farClip);
 
@@ -2746,13 +2731,9 @@ namespace MR {
 
     Flag* createMapFlag(const char* pName, const char* pInfoName, const TVec3f* pPos, const TVec3f& rRot, f32 a5, f32 a6, f32 a7, s32 a8, s32 a9,
                         f32 a10) {
-        Flag* pFlag = (Flag*)operator new(0x134);
-        if (pFlag != nullptr) {
-            pFlag = __ct__4FlagFPCc(pFlag, pName);
-        }
-
+        Flag* pFlag = new Flag(pName);
         pFlag->setInfoPos(pInfoName, pPos, rRot, a5, a6, a7, a8, a9, a10);
-        reinterpret_cast<NameObj*>(pFlag)->initWithoutIter();
+        pFlag->initWithoutIter();
 
         return pFlag;
     }
@@ -2765,39 +2746,39 @@ namespace MR {
 
     void tryRumblePadAndCameraDistanceVeryStrong(const LiveActor* pActor, f32 near, f32 middle, f32 far) {
         if (isNearPlayerAnyTime(pActor, near)) {
-            tryRumblePadVeryStrong(pActor, 0);
+            tryRumblePadVeryStrong(pActor, WPAD_CHAN0);
             shakeCameraStrong();
         } else if (isNearPlayerAnyTime(pActor, middle)) {
-            tryRumblePadStrong(pActor, 0);
+            tryRumblePadStrong(pActor, WPAD_CHAN0);
             shakeCameraNormal();
         } else if (isNearPlayerAnyTime(pActor, far)) {
-            tryRumblePadMiddle(pActor, 0);
+            tryRumblePadMiddle(pActor, WPAD_CHAN0);
             shakeCameraNormalWeak();
         }
     }
 
     void tryRumblePadAndCameraDistanceStrong(const LiveActor* pActor, f32 near, f32 middle, f32 far) {
         if (isNearPlayerAnyTime(pActor, near)) {
-            tryRumblePadStrong(pActor, 0);
+            tryRumblePadStrong(pActor, WPAD_CHAN0);
             shakeCameraNormal();
         } else if (isNearPlayerAnyTime(pActor, middle)) {
-            tryRumblePadMiddle(pActor, 0);
+            tryRumblePadMiddle(pActor, WPAD_CHAN0);
             shakeCameraNormalWeak();
         } else if (isNearPlayerAnyTime(pActor, far)) {
-            tryRumblePadWeak(pActor, 0);
+            tryRumblePadWeak(pActor, WPAD_CHAN0);
             shakeCameraWeak();
         }
     }
 
     void tryRumblePadAndCameraDistanceMiddle(const LiveActor* pActor, f32 near, f32 middle, f32 far) {
         if (isNearPlayerAnyTime(pActor, near)) {
-            tryRumblePadMiddle(pActor, 0);
+            tryRumblePadMiddle(pActor, WPAD_CHAN0);
             shakeCameraNormalWeak();
         } else if (isNearPlayerAnyTime(pActor, middle)) {
-            tryRumblePadWeak(pActor, 0);
+            tryRumblePadWeak(pActor, WPAD_CHAN0);
             shakeCameraWeak();
         } else if (isNearPlayerAnyTime(pActor, far)) {
-            tryRumblePadVeryWeak(pActor, 0);
+            tryRumblePadVeryWeak(pActor, WPAD_CHAN0);
             shakeCameraVeryWeak();
         }
     }

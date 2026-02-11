@@ -1,11 +1,11 @@
-#include "Game/Player/Mario.hpp"
 #include "Game/LiveActor/HitSensor.hpp"
+#include "Game/Player/Mario.hpp"
 #include "Game/Player/MarioActor.hpp"
 #include "Game/Util/MathUtil.hpp"
 #include "revolution/mtx.h"
 
 extern "C" {
-    extern u8 lbl_806B6288;
+extern u8 lbl_806B6288;
 }
 
 static const f32 sOne = 1.0f;
@@ -26,21 +26,7 @@ static Mario::Task sTaskJumpDropSlide = &Mario::taskOnHipDropSlide;
 static struct {
     Mario::Task task;
     u8 gap_07_805CCD70_data[0xA0];
-} sTaskFreezeEnd = { &Mario::taskOnFreezeEnd };
-
-class MarioModuleTask {
-public:
-    virtual void init() = 0;
-    virtual void start() = 0;
-    virtual void update() = 0;
-    virtual void calc() = 0;
-    virtual void end() = 0;
-    virtual bool exec() = 0;
-    virtual void draw() const = 0;
-
-    void* _4;
-    MarioModuleTask* mNext;
-};
+} sTaskFreezeEnd = {&Mario::taskOnFreezeEnd};
 
 void Mario::delTask(MarioModuleTask* pTask) {
     MarioModuleTask* next = pTask->mNext;
@@ -113,7 +99,7 @@ void Mario::drawTask() const {
 }
 
 void Mario::initTask() {
-    for (u32 i = 0; i < 11; i++) {
+    for (u32 i = 0; i < ARRAY_SIZE(_984); i++) {
         _984[i] = nullptr;
     }
 
@@ -121,7 +107,7 @@ void Mario::initTask() {
 }
 
 bool Mario::isActiveTask(Task task) {
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < ARRAY_SIZE(_984); i++) {
         if (_984[i] == task) {
             return true;
         }
@@ -131,7 +117,7 @@ bool Mario::isActiveTask(Task task) {
 }
 
 bool Mario::isActiveTaskID(u32 id) {
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < ARRAY_SIZE(_984); i++) {
         if (_984[i] != nullptr) {
             if (_A08[i] & id) {
                 return true;
@@ -148,7 +134,7 @@ bool Mario::pushTask(Task task, u32 flags) {
     }
 
     int index = 0;
-    for (; index < 11; index++) {
+    for (; index < ARRAY_SIZE(_984); index++) {
         if (_984[index] == nullptr) {
             break;
         }
@@ -160,7 +146,7 @@ bool Mario::pushTask(Task task, u32 flags) {
 }
 
 void Mario::popTask(Task task) {
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < ARRAY_SIZE(_984); i++) {
         if (_984[i] == task) {
             _984[i] = nullptr;
             return;
@@ -171,7 +157,7 @@ void Mario::popTask(Task task) {
 void Mario::callExtraTasks(u32 flags) {
     execTask();
 
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < ARRAY_SIZE(_984); i++) {
         if (_984[i] == nullptr) {
             continue;
         }
@@ -278,8 +264,8 @@ bool Mario::taskOnHipDropSlide(u32 flags) {
     }
 
     Mtx rot;
-    PSMTXRotAxisRad(rot, reinterpret_cast<const Vec*>(&_A58), sHipDropSlideRot);
-    PSMTXMultVecSR(rot, reinterpret_cast<const Vec*>(&dir), reinterpret_cast<Vec*>(&dir));
+    PSMTXRotAxisRad(rot, reinterpret_cast< const Vec* >(&_A58), sHipDropSlideRot);
+    PSMTXMultVecSR(rot, reinterpret_cast< const Vec* >(&dir), reinterpret_cast< Vec* >(&dir));
     dir.setLength(_A64);
     dir -= dirCopy;
     dir.setLength(sHipDropSlideLen);
@@ -360,15 +346,15 @@ void Mario::startHipDropSlide(const HitSensor* pSensor) {
     MR::normalizeOrZero(&dir);
 
     TVec3f reverseGravity = -getAirGravityVec();
-    PSVECCrossProduct(reinterpret_cast<const Vec*>(&reverseGravity), reinterpret_cast<const Vec*>(&dir), reinterpret_cast<Vec*>(&_A58));
+    _A58.cross(reverseGravity, dir);
     MR::normalizeOrZero(&_A58);
 
-    _A68 = const_cast<HitSensor*>(pSensor);
+    _A68 = const_cast< HitSensor* >(pSensor);
     _A4C = pSensor->mPosition;
     _A64 = pSensor->mRadius;
     _70C = getAirGravityVec();
 
-    changeAnimation("ヒップドロップ滑り", (const char*)nullptr);
+    changeAnimation("ヒップドロップ滑り", static_cast< const char* >(nullptr));
 }
 
 void Mario::startJumpDropSlide(const HitSensor* pSensor) {
@@ -406,10 +392,10 @@ void Mario::startJumpDropSlide(const HitSensor* pSensor) {
     MR::normalizeOrZero(&slideDir);
 
     TVec3f slideReverseGravity = -getAirGravityVec();
-    PSVECCrossProduct(reinterpret_cast<const Vec*>(&slideReverseGravity), reinterpret_cast<const Vec*>(&slideDir), reinterpret_cast<Vec*>(&_A58));
+    _A58.cross(slideReverseGravity, slideDir);
     MR::normalizeOrZero(&_A58);
 
-    _A68 = const_cast<HitSensor*>(pSensor);
+    _A68 = const_cast< HitSensor* >(pSensor);
     _A4C = pSensor->mPosition;
     _A64 = pSensor->mRadius;
     _70C = getAirGravityVec();
@@ -418,9 +404,9 @@ void Mario::startJumpDropSlide(const HitSensor* pSensor) {
         if (dot > sHopperJumpSlideDotMin) {
             f32 frontDot = mFrontVec.dot(slideDir);
             if (frontDot > sZero) {
-                changeAnimation("ジャンプ順滑り", (const char*)nullptr);
+                changeAnimation("ジャンプ順滑り", static_cast< const char* >(nullptr));
             } else {
-                changeAnimation("ジャンプ逆滑り", (const char*)nullptr);
+                changeAnimation("ジャンプ逆滑り", static_cast< const char* >(nullptr));
             }
         }
     }

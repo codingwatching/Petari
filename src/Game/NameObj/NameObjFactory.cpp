@@ -1465,7 +1465,7 @@ namespace {
         // FIXME: Polta is being worked on in #1867
         {
             "Polta",
-            createPoltaStub,
+            createNameObj< Polta >,
             "Polta",
         },
         {

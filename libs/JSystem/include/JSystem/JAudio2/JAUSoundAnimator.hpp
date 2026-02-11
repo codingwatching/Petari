@@ -4,7 +4,11 @@
 #include <revolution.h>
 
 class JAISoundHandles;
-class JAUSoundAnimation;
+class JAUSoundAnimation {
+public:
+    u32 getStartSoundIndex(f32) const;
+    u32 getEndSoundIndex(f32) const;
+};
 class JAUSoundAnimationSound;
 class JASSoundParams;
 

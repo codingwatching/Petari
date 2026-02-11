@@ -107,3 +107,17 @@ public:
 
     MarioActor* mActor;  // 0x4
 };
+
+class MarioModuleTask {
+public:
+    virtual void init() = 0;
+    virtual void start() = 0;
+    virtual void update() = 0;
+    virtual void calc() = 0;
+    virtual void end() = 0;
+    virtual bool exec() = 0;
+    virtual void draw() const = 0;
+
+    void* _4;
+    MarioModuleTask* mNext;
+};
