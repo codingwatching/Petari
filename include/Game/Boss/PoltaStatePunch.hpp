@@ -20,10 +20,8 @@ public:
     bool isEnableAttack(const HitSensor*) const;
     bool isEnablePunchArm() const;
 
-    inline Polta* getPolta() { return mPoltaPtr; }
     PoltaArm* getAttackActor();
 
-    /* 0xC */ Polta* mPoltaPtr;
     u8 padding[0xC];
     /* 0x1C */ bool mIsLeftArmActor;
     /* 0x1D */ bool mIsActionAffectBody;

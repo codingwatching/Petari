@@ -11,11 +11,11 @@ namespace NrvPoltaStateAttackGround {
 };  // namespace NrvPoltaStateAttackGround
 
 PoltaStateAttackGround::PoltaStateAttackGround(Polta* pPolta)
-    : ActorStateBase< Polta >("[state]地面叩き攻撃"), mPoltaPtr(pPolta), mIsAffectBody(true) {
+    : ActorStateBase< Polta >("[state]地面叩き攻撃", pPolta), mIsAffectBody(true) {
     initNerve(&NrvPoltaStateAttackGround::PoltaStateAttackGroundNrvStart::sInstance);
-    mAttackStartLength = MR::getBckFrameMax(mPoltaPtr, "AttackFrontStart");
-    mAttackLength = MR::getBckFrameMax(mPoltaPtr, "AttackFront");
-    mAttackToWaitLength = MR::getBckFrameMax(mPoltaPtr, "AttackFrontToWait");
+    mAttackStartLength = MR::getBckFrameMax(getHost(), "AttackFrontStart");
+    mAttackLength = MR::getBckFrameMax(getHost(), "AttackFront");
+    mAttackToWaitLength = MR::getBckFrameMax(getHost(), "AttackFrontToWait");
 };
 
 // Unused remnant also found in PoltaStatePunch?
@@ -29,15 +29,15 @@ void PoltaStateAttackGround::appear() {
 
 void PoltaStateAttackGround::exeStart() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::requestStartControllArm(mPoltaPtr);
-        PoltaFunction::startAction(mPoltaPtr, "AttackFrontStart", mIsAffectBody);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_PREP_ARM_DOWN", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_ARM_LIFT_UP", -1, -1);
+        PoltaFunction::requestStartControllArm(getHost());
+        PoltaFunction::startAction(getHost(), "AttackFrontStart", mIsAffectBody);
+        MR::startSound(getHost(), "SE_BV_POLTA_PREP_ARM_DOWN", -1, -1);
+        MR::startSound(getHost(), "SE_BM_POLTA_ARM_LIFT_UP", -1, -1);
     }
     if (MR::isLessStep(this, 60)) {
-        mPoltaPtr->rotateToPlayer();
+        getHost()->rotateToPlayer();
     }
-    if (!PoltaFunction::isEnableAttackLeftArm(mPoltaPtr) && !PoltaFunction::isEnableAttackRightArm(mPoltaPtr)) {
+    if (!PoltaFunction::isEnableAttackLeftArm(getHost()) && !PoltaFunction::isEnableAttackRightArm(getHost())) {
         kill();
     } else {
         if (MR::isGreaterStep(this, mAttackStartLength)) {
@@ -48,17 +48,17 @@ void PoltaStateAttackGround::exeStart() {
 
 void PoltaStateAttackGround::exeAttack() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "AttackFront", mIsAffectBody);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_ARM_DOWN", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_ARM_SWING_DOWN", -1, -1);
+        PoltaFunction::startAction(getHost(), "AttackFront", mIsAffectBody);
+        MR::startSound(getHost(), "SE_BV_POLTA_ARM_DOWN", -1, -1);
+        MR::startSound(getHost(), "SE_BM_POLTA_ARM_SWING_DOWN", -1, -1);
     }
-    if (!PoltaFunction::isEnableAttackLeftArm(mPoltaPtr) && !PoltaFunction::isEnableAttackRightArm(mPoltaPtr)) {
+    if (!PoltaFunction::isEnableAttackLeftArm(getHost()) && !PoltaFunction::isEnableAttackRightArm(getHost())) {
         kill();
     } else {
         if (MR::isGreaterStep(this, mAttackLength)) {
             setNerve(&NrvPoltaStateAttackGround::PoltaStateAttackGroundNrvToWait::sInstance);
             MR::tryRumblePadStrong(this, 0);
-            MR::startSound(mPoltaPtr, "SE_BM_POLTA_HIT_GROUND", -1, -1);
+            MR::startSound(getHost(), "SE_BM_POLTA_HIT_GROUND", -1, -1);
             MR::shakeCameraNormalStrong();
         }
     }
@@ -66,7 +66,7 @@ void PoltaStateAttackGround::exeAttack() {
 
 void PoltaStateAttackGround::exeToWait() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "AttackFrontToWait", mIsAffectBody);
+        PoltaFunction::startAction(getHost(), "AttackFrontToWait", mIsAffectBody);
     }
     if (MR::isGreaterStep(this, mAttackToWaitLength)) {
         kill();
@@ -74,7 +74,7 @@ void PoltaStateAttackGround::exeToWait() {
 }
 
 bool PoltaStateAttackGround::isEnableAttack(const HitSensor* pSensor) const {
-    if (PoltaFunction::isBodySensor(mPoltaPtr, pSensor)) {
+    if (PoltaFunction::isBodySensor(getHost(), pSensor)) {
         return false;
     } else {
         return isNerve(&NrvPoltaStateAttackGround::PoltaStateAttackGroundNrvAttack::sInstance);

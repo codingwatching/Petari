@@ -18,7 +18,6 @@ public:
 
     bool isEnableAttack(const HitSensor*) const;
 
-    /* 0xC */ Polta* mPoltaPtr;
     /* 0x10 */ bool mIsAffectBody;
     /* 0x14 */ s32 mAttackStartLength;
     /* 0x18 */ s32 mAttackLength;

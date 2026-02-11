@@ -16,7 +16,7 @@ namespace {
 };
 
 PoltaStateGenerateRock::PoltaStateGenerateRock(Polta* pPolta)
-    : ActorStateBase< Polta >("ポルタ岩生成"), mOwner(pPolta), mPatternIndex(0), mIndexIntoPattern(0), mMaxIndexIntoPattern(5), mEndDelayStep(180) {
+    : ActorStateBase< Polta >("ポルタ岩生成", pPolta), mPatternIndex(0), mIndexIntoPattern(0), mMaxIndexIntoPattern(5), mEndDelayStep(180) {
     initNerve(&NrvPoltaStateGenerateRock::PoltaStateGenerateRockNrvSign::sInstance);
 }
 
@@ -28,12 +28,12 @@ void PoltaStateGenerateRock::appear() {
 
 void PoltaStateGenerateRock::exeSign() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::requestStartControllArm(mOwner);
-        PoltaFunction::startAction(mOwner, "GenerateRockStart", true);
-        MR::startSound(mOwner, "SE_BV_POLTA_GEN_ROCK", -1, -1);
+        PoltaFunction::requestStartControllArm(getHost());
+        PoltaFunction::startAction(getHost(), "GenerateRockStart", true);
+        MR::startSound(getHost(), "SE_BV_POLTA_GEN_ROCK", -1, -1);
     }
-    mOwner->rotateToPlayer();
-    if (MR::isActionEnd(mOwner)) {
+    getHost()->rotateToPlayer();
+    if (MR::isActionEnd(getHost())) {
         NerveExecutor::setNerve(&NrvPoltaStateGenerateRock::PoltaStateGenerateRockNrvGenerate::sInstance);
     }
 }
@@ -42,19 +42,19 @@ void PoltaStateGenerateRock::exeGenerate() {
     s32 v2;  // r31
 
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mOwner, "GenerateRock", true);
-        MR::zeroVelocity(mOwner);
+        PoltaFunction::startAction(getHost(), "GenerateRock", true);
+        MR::zeroVelocity(getHost());
         mPatternIndex = MR::getRandom((s32)0, (s32)9);
     }
-    mOwner->rotateToPlayer();
+    getHost()->rotateToPlayer();
     if (MR::isIntervalStep(this, 30)) {
         v2 = mIndexIntoPattern % 7;
-        if (::sRockPattern[28 * mPatternIndex + v2] && !PoltaFunction::isMaxGenerateBombTeresa(mOwner)) {
-            PoltaFunction::appearBlackRockCircle(mOwner, mOwner->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
-        } else if (MR::getRandom(0.0f, 1.0f) < 0.08f && MR::getDeclareRemnantCoinCount(mOwner) > 0) {
-            PoltaFunction::appearYellowRockCircle(mOwner, mOwner->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
+        if (::sRockPattern[28 * mPatternIndex + v2] && !PoltaFunction::isMaxGenerateBombTeresa(getHost())) {
+            PoltaFunction::appearBlackRockCircle(getHost(), getHost()->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
+        } else if (MR::getRandom(0.0f, 1.0f) < 0.08f && MR::getDeclareRemnantCoinCount(getHost()) > 0) {
+            PoltaFunction::appearYellowRockCircle(getHost(), getHost()->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
         } else {
-            PoltaFunction::appearWhiteRockCircle(mOwner, mOwner->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
+            PoltaFunction::appearWhiteRockCircle(getHost(), getHost()->mPosition, 600.0f, v2, mMaxIndexIntoPattern);
         }
         mIndexIntoPattern++;
     }
@@ -65,11 +65,11 @@ void PoltaStateGenerateRock::exeGenerate() {
 
 void PoltaStateGenerateRock::exeEnd() {
     if (MR::isStep(this, mEndDelayStep)) {
-        PoltaFunction::startAction(mOwner, "GenerateRockToWait", true);
+        PoltaFunction::startAction(getHost(), "GenerateRockToWait", true);
     }
-    mOwner->rotateToPlayer();
+    getHost()->rotateToPlayer();
     if (MR::isGreaterStep(this, mEndDelayStep)) {
-        if (MR::isActionEnd(mOwner)) {
+        if (MR::isActionEnd(getHost())) {
             kill();
         }
     }

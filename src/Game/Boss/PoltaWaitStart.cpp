@@ -7,9 +7,9 @@ PoltaWaitStart::PoltaWaitStart(Polta* pPolta) : PoltaActionBase("ポルタ開始
 
 void PoltaWaitStart::appear() {
     mIsDead = false;
-    PoltaFunction::killLeftArm(mPoltaPtr);
-    PoltaFunction::killRightArm(mPoltaPtr);
-    MR::hideModel(mPoltaPtr);
+    PoltaFunction::killLeftArm(getHost());
+    PoltaFunction::killRightArm(getHost());
+    MR::hideModel(getHost());
 }
 
 PoltaWaitStart::~PoltaWaitStart() {}

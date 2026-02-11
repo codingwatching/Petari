@@ -17,9 +17,6 @@ public:
     bool isEnableSensor() const;
     void setActionName(const char*);
 
-    inline Polta* getPolta() { return mPoltaPtr; }
-
-    /* 0xC */ Polta* mPoltaPtr;
     u8 padding[0xC];
     /* 0x1C */ const char* mActionName;
     bool _20;

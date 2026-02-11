@@ -14,7 +14,7 @@ namespace NrvPoltaStatePunch {
 };  // namespace NrvPoltaStatePunch
 
 PoltaStatePunch::PoltaStatePunch(Polta* pPolta)
-    : ActorStateBase< Polta >("[state]地面叩き攻撃"), mPoltaPtr(pPolta), mIsLeftArmActor(true), mIsActionAffectBody(true) {
+    : ActorStateBase< Polta >("[state]地面叩き攻撃", pPolta), mIsLeftArmActor(true), mIsActionAffectBody(true) {
     initNerve(&NrvPoltaStatePunch::PoltaStatePunchNrvStart::sInstance);
 }
 
@@ -26,9 +26,9 @@ void PoltaStatePunch::appear() {
 
 PoltaArm* PoltaStatePunch::getAttackActor() {
     if (mIsLeftArmActor) {
-        return PoltaFunction::getLeftArmActor(mPoltaPtr);
+        return PoltaFunction::getLeftArmActor(getHost());
     } else {
-        return PoltaFunction::getRightArmActor(mPoltaPtr);
+        return PoltaFunction::getRightArmActor(getHost());
     }
 }
 
@@ -37,12 +37,12 @@ const char* unusedDamagePunch = "Damage";
 
 void PoltaStatePunch::exeStart() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::requestStartControllArm(mPoltaPtr);
-        PoltaFunction::startAction(mPoltaPtr, mIsLeftArmActor ? "PunchLeftStart" : "PunchRightStart", mIsActionAffectBody);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_PREP_PUNCH", -1, -1);
+        PoltaFunction::requestStartControllArm(getHost());
+        PoltaFunction::startAction(getHost(), mIsLeftArmActor ? "PunchLeftStart" : "PunchRightStart", mIsActionAffectBody);
+        MR::startSound(getHost(), "SE_BV_POLTA_PREP_PUNCH", -1, -1);
     }
     if (MR::isLessStep(this, 60)) {
-        mPoltaPtr->rotateToPlayer();
+        getHost()->rotateToPlayer();
     }
 
     if (!isEnablePunchArm()) {
@@ -56,9 +56,9 @@ void PoltaStatePunch::exeStart() {
 
 void PoltaStatePunch::exeAttack() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, mIsLeftArmActor ? "PunchLeft" : "PunchRight", mIsActionAffectBody);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_PUNCH", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_PUNCH", -1, -1);
+        PoltaFunction::startAction(getHost(), mIsLeftArmActor ? "PunchLeft" : "PunchRight", mIsActionAffectBody);
+        MR::startSound(getHost(), "SE_BV_POLTA_PUNCH", -1, -1);
+        MR::startSound(getHost(), "SE_BM_POLTA_PUNCH", -1, -1);
     }
 
     if (!isEnablePunchArm()) {
@@ -72,7 +72,7 @@ void PoltaStatePunch::exeAttack() {
 
 void PoltaStatePunch::exeToWait() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, mIsLeftArmActor ? "PunchLeftToWait" : "PunchRightToWait", mIsActionAffectBody);
+        PoltaFunction::startAction(getHost(), mIsLeftArmActor ? "PunchLeftToWait" : "PunchRightToWait", mIsActionAffectBody);
     }
 
     if (!isEnablePunchArm()) {
@@ -80,7 +80,7 @@ void PoltaStatePunch::exeToWait() {
         return;
     }
     if (MR::isGreaterStep(this, 70)) {
-        mPoltaPtr->rotateToPlayer();
+        getHost()->rotateToPlayer();
     }
     if (MR::isActionEnd(getAttackActor())) {
         kill();
@@ -92,11 +92,11 @@ bool PoltaStatePunch::isEnableAttack(const HitSensor* pSensor) const {
         return false;
     }
 
-    return mIsLeftArmActor ? PoltaFunction::isLeftArmSensor(this->mPoltaPtr, pSensor) : PoltaFunction::isRightArmSensor(this->mPoltaPtr, pSensor);
+    return mIsLeftArmActor ? PoltaFunction::isLeftArmSensor(this->getHost(), pSensor) : PoltaFunction::isRightArmSensor(this->getHost(), pSensor);
 }
 
 bool PoltaStatePunch::isEnablePunchArm() const {
-    return mIsLeftArmActor ? PoltaFunction::isEnableAttackLeftArm(mPoltaPtr) : PoltaFunction::isEnableAttackRightArm(mPoltaPtr);
+    return mIsLeftArmActor ? PoltaFunction::isEnableAttackLeftArm(getHost()) : PoltaFunction::isEnableAttackRightArm(getHost());
 }
 
 PoltaStatePunch::~PoltaStatePunch() {}
