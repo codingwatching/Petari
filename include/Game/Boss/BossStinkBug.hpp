@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Game/NameObj/NameObj.hpp"
 #include "Game/LiveActor/LiveActor.hpp"
 #include "Game/Map/CollisionParts.hpp"
 #include "Game/Util/BaseMatrixFollowTargetHolder.hpp"
