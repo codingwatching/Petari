@@ -41,7 +41,7 @@ namespace FileSelectItemSub {
 
         FileSelectItem* mItem;  // 0x08
         s32 _C;
-        u32 _10;
+        s32 _10;
     };
 };  // namespace FileSelectItemSub
 
@@ -49,8 +49,52 @@ class FileSelectItem : public LiveActor {
 public:
     FileSelectItem(s32, bool, const FileSelectIconID&, const char*);
 
+    virtual ~FileSelectItem();
+    virtual void init(const JMapInfoIter&);
+    virtual void appear();
+    virtual void makeActorAppeared();
+    virtual void makeActorDead();
+    virtual void control();
+
+    bool isNew() const;
+    bool isExist() const;
+    void format();
+    void change(const FileSelectIconID&, bool);
+    void forceChange(const FileSelectIconID&, bool);
+    void invalidateSelect();
+    void validateSelect();
+    void appearIndex();
+    void disappearIndex();
+    void copyIconID(FileSelectIconID*);
+    void setSelectDelegator(FileSelectItemDelegatorBase*);
+    void onPointing();
+    void offPointing();
+    void validateRotate();
+    void turnToFront(s32);
+    void exeFormat();
+    void exeChangeFellow();
+    void exeChangeMii();
+    void createNew();
+    void createFellows();
+    void createMii();
+    void createNumber();
+    void updatePointing();
+    void updateRotate();
+    void playPointedME();
+    void playPointedNotUsingME();
+    void appearFellowModel();
+    void killAllModels();
+    void emitOpen();
+    void emitVanish();
+    void emitCopy();
+    void emitCompleteEffect();
+    void deleteCompleteEffect();
+
+    void exeExistWait();
+    void exeNewWait();
+
     bool _8C;
-    u32 _90;
+    PartsModel* mPlanetMapObj;  // 0x90
     FileSelectIconID* mIconID;  // 0x94
     FileSelectModel** mModels;  // 0x98
     MiiFaceParts* mFaceParts;   // 0x9C
@@ -71,8 +115,7 @@ public:
     u8 _155;
     u8 _156;
     u8 _157;
-    f32 _158;
-    f32 _15C;
+    TVec2f _158;
     f32 _160;
     bool mIsInvalidRotate;  // 0x164
     u8 _165;

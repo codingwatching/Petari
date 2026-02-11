@@ -199,7 +199,7 @@ Game/Animation/XanimeCore.cpp:
 Game/Animation/XanimePlayer.cpp:
 	.text       start:0x8001B148 end:0x8001C4D4
 	.data       start:0x80564B48 end:0x80564B88
-	.sdata      start:0x806B1650 end:0x806B16C0
+	.sdata      start:0x806B1650 end:0x806B1698
 	.sdata2     start:0x806B7D78 end:0x806B7D88
 
 Game/Animation/XanimeResource.cpp:
@@ -610,34 +610,41 @@ Game/Boss/BossKameckStateBattle.cpp:
 Game/Boss/BossStinkBug.cpp:
 	.text       start:0x8003BE34 end:0x8003D1D8
 	.ctors      start:0x8052E860 end:0x8052E864
-	.rodata     start:0x80530ED8 end:0x80530F18
+	.rodata     start:0x80530ED8 end:0x80530F00
 	.data       start:0x80567998 end:0x80567BC8
 	.bss        start:0x8060A5E8 end:0x8060A5F8
+	.sdata      start:0x806B1698 end:0x806B16A0
 	.sdata2     start:0x806B8220 end:0x806B8268
 
 Game/Boss/BossStinkBugActionBase.cpp:
 	.text       start:0x8003D1D8 end:0x8003EF1C
-	.data       start:0x80567BC8 end:0x80567F30
+	.rodata     start:0x80530F00 end:0x80530F08
+	.data       start:0x80567BC8 end:0x80567F00
+	.sdata      start:0x806B16A0 end:0x806B16A8
 	.sdata2     start:0x806B8268 end:0x806B82D8
 
 Game/Boss/BossStinkBugActionFlyHigh.cpp:
 	.text       start:0x8003EF1C end:0x8003FD2C
 	.ctors      start:0x8052E864 end:0x8052E868
-	.data       start:0x80567F30 end:0x805680B8
+	.data       start:0x80567F00 end:0x80568088
+	.sdata      start:0x806B16A8 end:0x806B16B0
 	.sbss       start:0x806B3040 end:0x806B3088
 	.sdata2     start:0x806B82D8 end:0x806B82F8
 
 Game/Boss/BossStinkBugActionFlyLow.cpp:
 	.text       start:0x8003FD2C end:0x8004060C
 	.ctors      start:0x8052E868 end:0x8052E86C
-	.data       start:0x805680B8 end:0x805681C8
+	.rodata     start:0x80530F08 end:0x80530F10
+	.data       start:0x80568088 end:0x80568190
+	.sdata      start:0x806B16B0 end:0x806B16B8
 	.sbss       start:0x806B3088 end:0x806B30B0
 	.sdata2     start:0x806B82F8 end:0x806B8328
 
 Game/Boss/BossStinkBugActionGround.cpp:
 	.text       start:0x8004060C end:0x80040F3C
 	.ctors      start:0x8052E86C end:0x8052E870
-	.data       start:0x805681C8 end:0x805682A0
+	.data       start:0x80568190 end:0x805682A0
+	.sdata      start:0x806B16B8 end:0x806B16C0
 	.sbss       start:0x806B30B0 end:0x806B30D8
 	.sdata2     start:0x806B8328 end:0x806B8358
 
@@ -650,24 +657,24 @@ Game/Boss/BossStinkBugActionSequencer.cpp:
 Game/Boss/BossStinkBugAngryDemo.cpp:
 	.text       start:0x80041558 end:0x800418B8
 	.ctors      start:0x8052E874 end:0x8052E878
-	.data       start:0x80568358 end:0x80568548
+	.data       start:0x80568358 end:0x80568470
 	.sbss       start:0x806B3100 end:0x806B3108
 
 Game/Boss/BossStinkBugBomb.cpp:
 	.text       start:0x800418B8 end:0x80041FEC
 	.ctors      start:0x8052E878 end:0x8052E87C
-	.data       start:0x80568548 end:0x80568608
+	.data       start:0x80568470 end:0x805685E0
 	.sbss       start:0x806B3108 end:0x806B3110
 	.sdata2     start:0x806B8358 end:0x806B83A0
 
 Game/Boss/BossStinkBugBombHolder.cpp:
 	.text       start:0x80041FEC end:0x800421A0
-	.data       start:0x80568608 end:0x805686B8
+	.data       start:0x805685E0 end:0x80568630
 
 Game/Boss/BossStinkBugFinishDemo.cpp:
 	.text       start:0x800421A0 end:0x80042550
 	.ctors      start:0x8052E87C end:0x8052E880
-	.data       start:0x805686B8 end:0x80568720
+	.data       start:0x80568630 end:0x80568720
 	.sbss       start:0x806B3110 end:0x806B3120
 
 Game/Boss/BossStinkBugFlyDemo.cpp:
@@ -678,6 +685,7 @@ Game/Boss/BossStinkBugFlyDemo.cpp:
 
 Game/Boss/BossStinkBugFunction.cpp:
 	.text       start:0x80042938 end:0x8004314C
+	.rodata     start:0x80530F10 end:0x80530F18
 	.data       start:0x80568880 end:0x805688A0
 	.sdata2     start:0x806B83A0 end:0x806B83D8
 
@@ -1149,18 +1157,18 @@ Game/Boss/OtaKingMagma.cpp:
 
 Game/Boss/Polta.cpp:
 	.text       start:0x8006E654 end:0x8006F3F4
-	.data       start:0x8056F6B8 end:0x8056F9A0
+	.data       start:0x8056F6B8 end:0x8056F8A8
 	.sdata2     start:0x806B8B40 end:0x806B8B68
 
 Game/Boss/PoltaActionBase.cpp:
 	.text       start:0x8006F3F4 end:0x8006F924
-	.data       start:0x8056F9A0 end:0x8056FA08
+	.data       start:0x8056F8A8 end:0x8056F9F0
 	.sdata2     start:0x806B8B68 end:0x806B8B70
 
 Game/Boss/PoltaActionSequencer.cpp:
 	.text       start:0x8006F924 end:0x8006FE6C
 	.ctors      start:0x8052E958 end:0x8052E95C
-	.data       start:0x8056FA08 end:0x8056FA78
+	.data       start:0x8056F9F0 end:0x8056FA78
 	.sbss       start:0x806B3670 end:0x806B3688
 
 Game/Boss/PoltaArm.cpp:
@@ -1173,53 +1181,55 @@ Game/Boss/PoltaArm.cpp:
 Game/Boss/PoltaBattleLv1.cpp:
 	.text       start:0x80070AB0 end:0x80071438
 	.ctors      start:0x8052E960 end:0x8052E964
-	.data       start:0x8056FC70 end:0x8056FE70
+	.data       start:0x8056FC70 end:0x8056FDC0
 	.sbss       start:0x806B36A8 end:0x806B36C8
 	.sdata2     start:0x806B8B80 end:0x806B8B88
 
 Game/Boss/PoltaBattleLv2.cpp:
 	.text       start:0x80071438 end:0x800722BC
 	.ctors      start:0x8052E964 end:0x8052E968
-	.data       start:0x8056FE70 end:0x8056FF30
+	.data       start:0x8056FDC0 end:0x8056FF30
 	.sbss       start:0x806B36C8 end:0x806B36F0
 	.sdata2     start:0x806B8B88 end:0x806B8BA0
 
 Game/Boss/PoltaDemo.cpp:
 	.text       start:0x800722BC end:0x80072A08
 	.ctors      start:0x8052E968 end:0x8052E96C
-	.data       start:0x8056FF30 end:0x805700B0
+	.data       start:0x8056FF30 end:0x80570088
 	.sbss       start:0x806B36F0 end:0x806B3700
 	.sdata2     start:0x806B8BA0 end:0x806B8BB0
 
 Game/Boss/PoltaFunction.cpp:
 	.text       start:0x80072A08 end:0x80073324
+	.data       start:0x80570088 end:0x805700B0
 	.sdata2     start:0x806B8BB0 end:0x806B8BD8
 
 Game/Boss/PoltaGroundRock.cpp:
 	.text       start:0x80073324 end:0x80073C54
 	.ctors      start:0x8052E96C end:0x8052E970
-	.data       start:0x805700B0 end:0x80570228
+	.data       start:0x805700B0 end:0x80570208
 	.sbss       start:0x806B3700 end:0x806B3710
 	.sdata2     start:0x806B8BD8 end:0x806B8C00
 
 Game/Boss/PoltaGroundRockHolder.cpp:
 	.text       start:0x80073C54 end:0x80073DF8
-	.data       start:0x80570228 end:0x805702F8
+	.data       start:0x80570208 end:0x80570250
 
 Game/Boss/PoltaRock.cpp:
 	.text       start:0x80073DF8 end:0x800748BC
 	.ctors      start:0x8052E970 end:0x8052E974
-	.data       start:0x805702F8 end:0x805703B8
+	.data       start:0x80570250 end:0x805703A0
 	.sbss       start:0x806B3710 end:0x806B3720
 	.sdata2     start:0x806B8C00 end:0x806B8C38
 
 Game/Boss/PoltaRockHolder.cpp:
 	.text       start:0x800748BC end:0x80074A08
-	.data       start:0x805703B8 end:0x805704F0
+	.data       start:0x805703A0 end:0x805703E0
 
 Game/Boss/PoltaSensorCtrl.cpp:
 	.text       start:0x80074A08 end:0x80074D90
 	.rodata     start:0x805310A0 end:0x80531310
+	.data       start:0x805703E0 end:0x805704F0
 	.sdata2     start:0x806B8C38 end:0x806B8C48
 
 Game/Boss/PoltaStateAttackGround.cpp:
@@ -1252,19 +1262,19 @@ Game/Boss/PoltaStatePunch.cpp:
 Game/Boss/PoltaStateStagger.cpp:
 	.text       start:0x80075E94 end:0x80076164
 	.ctors      start:0x8052E984 end:0x8052E988
-	.data       start:0x80570920 end:0x805709A0
+	.data       start:0x80570920 end:0x80570990
 	.sbss       start:0x806B3760 end:0x806B3768
 	.sdata2     start:0x806B8C68 end:0x806B8C90
 
 Game/Boss/PoltaWaitStart.cpp:
 	.text       start:0x80076164 end:0x8007624C
-	.data       start:0x805709A0 end:0x805709F0
+	.data       start:0x80570990 end:0x805709D0
 
 Game/Boss/SkeletalFishBaby.cpp:
 	.text       start:0x8007624C end:0x80077248
 	.ctors      start:0x8052E988 end:0x8052E98C
 	.rodata     start:0x80531430 end:0x80531470
-	.data       start:0x805709F0 end:0x80570BC8
+	.data       start:0x805709D0 end:0x80570BC8
 	.sbss       start:0x806B3768 end:0x806B3778
 	.sdata2     start:0x806B8C90 end:0x806B8CC0
 
@@ -2049,7 +2059,7 @@ Game/Camera/CameraSubjective.cpp:
 
 Game/Camera/CameraTalk.cpp:
 	.text       start:0x800AF408 end:0x800AFBA4
-	.data       start:0x80576368 end:0x805763D8
+	.data       start:0x80576368 end:0x805763C0
 	.sdata2     start:0x806B9938 end:0x806B9970
 
 Game/Camera/CameraTargetArg.cpp:
@@ -2058,7 +2068,7 @@ Game/Camera/CameraTargetArg.cpp:
 
 Game/Camera/CameraTargetHolder.cpp:
 	.text       start:0x800AFCCC end:0x800AFEAC
-	.data       start:0x805763D8 end:0x805763E8
+	.data       start:0x805763C0 end:0x805763E8
 	.sdata2     start:0x806B9970 end:0x806B9978
 
 Game/Camera/CameraTargetMtx.cpp:

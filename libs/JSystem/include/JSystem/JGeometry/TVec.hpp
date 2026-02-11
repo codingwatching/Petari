@@ -38,7 +38,7 @@ namespace JGeometry {
         }
 
         template < typename A >
-        TVec2(A _x, A _y) {
+        inline TVec2(A _x, A _y) {
             x = _x;
             y = _y;
         }
@@ -100,6 +100,10 @@ namespace JGeometry {
         T distance(const TVec2< T >& rOther) const;
         void zero();
 
+        inline T squareDist(const TVec2< T >& rOther) const {
+            return ((x - rOther.x) * (x - rOther.x)) + ((y - rOther.y) * (y - rOther.y));
+        }
+
         /* Operators */
         TVec2< T >& operator=(const TVec2< T >& rSrc);
         TVec2< T >& operator+(const TVec2< T >& rOther) const;
@@ -148,7 +152,7 @@ namespace JGeometry {
         s16 x, y, z;
 
         TVec3() {
-            x = x; // TODO: This shouldn't be here, but it's the only way to get a Ctor generated in OceanRingPipe.cpp
+            x = x;  // TODO: This shouldn't be here, but it's the only way to get a Ctor generated in OceanRingPipe.cpp
         }
 
         TVec3(s16 x, s16 y, s16 z) {
@@ -321,7 +325,7 @@ namespace JGeometry {
         }
 
         // needed in StarPieceFollowGroup???
-        inline TVec3 multInLine(f32 val) {
+        inline TVec3 multInLine(f32 val) const{
             TVec3 ret(*this);
             ret.x *= val;
             ret.y *= val;

@@ -8,16 +8,6 @@
 #include "Game/Util/SoundUtil.hpp"
 #include <cstring>
 
-extern "C" {
-extern char lbl_805CB350[];
-extern char lbl_805CB35B[];
-extern char lbl_805C98EB[];
-extern char lbl_805C98FF[];
-extern char lbl_805C9A48[];
-extern char lbl_805C9A67[];
-extern char lbl_806B22C9;
-}
-
 struct SoundList {
     union SoundFlags {
         u32 _0;
@@ -548,18 +538,18 @@ SoundList soundlist[] = {
         0,         // 0x14
     },
     {
-        "ジャンプ踏切",  // name
-        0x20029,         // 0x4
-        0x4000000,       // 0x8
-        lbl_805C98EB,    // 0xC
-        0,               // 0x10
-        0,               // 0x14
+        "ジャンプ踏切",    // name
+        0x20029,           // 0x4
+        0x4000000,         // 0x8
+        "水跳ねジャンプ",  // 0xC
+        0,                 // 0x10
+        0,                 // 0x14
     },
     {
         "着地",        // name
         0x2002a,       // 0x4
         0x4000000,     // 0x8
-        lbl_805C98FF,  // 0xC
+        "水跳ね着地",  // 0xC
         0,             // 0x10
         0,             // 0x14
     },
@@ -599,7 +589,7 @@ SoundList soundlist[] = {
         "尻ドロップ着地",  // name
         0x20006,           // 0x4
         0x4000000,         // 0x8
-        lbl_805C98FF,      // 0xC
+        "水跳ね着地",      // 0xC
         0,                 // 0x10
         0,                 // 0x14
     },
@@ -663,7 +653,7 @@ SoundList soundlist[] = {
         "スピンジャンプ",  // name
         0x2002c,           // 0x4
         0x4000000,         // 0x8
-        lbl_805C98EB,      // 0xC
+        "水跳ねジャンプ",  // 0xC
         0,                 // 0x10
         0,                 // 0x14
     },
@@ -751,7 +741,7 @@ SoundList soundlist[] = {
         "倒れ",        // name
         0x20013,       // 0x4
         0x4000000,     // 0x8
-        lbl_805C9A48,  // 0xC
+        "水跳ね左足",  // 0xC
         0,             // 0x10
         0,             // 0x14
     },
@@ -759,23 +749,23 @@ SoundList soundlist[] = {
         "吹っ飛び倒れ",  // name
         0x20017,         // 0x4
         0x4000000,       // 0x8
-        lbl_805C98FF,    // 0xC
+        "水跳ね着地",    // 0xC
         0,               // 0x10
         0,               // 0x14
     },
     {
-        "坂滑り",      // name
-        0x20023,       // 0x4
-        0x9000000,     // 0x8
-        lbl_805C9A67,  // 0xC
-        0,             // 0x10
-        0,             // 0x14
+        "坂滑り",    // name
+        0x20023,     // 0x4
+        0x9000000,   // 0x8
+        "水面滑り",  // 0xC
+        0,           // 0x10
+        0,           // 0x14
     },
     {
         "ルイージ滑り",  // name
         0x20099,         // 0x4
         0x9000000,       // 0x8
-        lbl_805C9A67,    // 0xC
+        "水面滑り",      // 0xC
         0,               // 0x10
         0,               // 0x14
     },
@@ -1508,12 +1498,12 @@ SoundList soundlist[] = {
         0,               // 0x14
     },
     {
-        "スリップ",    // name
-        0x2000b,       // 0x4
-        0x9000000,     // 0x8
-        lbl_805C9A67,  // 0xC
-        0,             // 0x10
-        0,             // 0x14
+        "スリップ",  // name
+        0x2000b,     // 0x4
+        0x9000000,   // 0x8
+        "水面滑り",  // 0xC
+        0,           // 0x10
+        0,           // 0x14
     },
     {
         "最後の一撃",  // name
@@ -1709,22 +1699,22 @@ u32 Mario::initSoundTable(SoundList* list, u32 globalTablePosition) {
         pEntry->_14 = pEntry->_4;
 
         if (globalTablePosition != 0) {
-            u32 swapOffset = 0;
+            s32 swapIndex = 0;
             while (true) {
-                const SoundSwapList* pSwapEntry = reinterpret_cast< const SoundSwapList* >(reinterpret_cast< const u8* >(soundswaplist) + swapOffset);
+                const SoundSwapList* pSwapEntry = soundswaplist + swapIndex;
                 if (pSwapEntry->name[0] == '\0') {
                     break;
                 }
 
                 if (strcmp(pEntry->name, pSwapEntry->name) == 0) {
-                    u32 soundID = *reinterpret_cast< u32* >(reinterpret_cast< u8* >(pSwapOffset) + swapOffset);
+                    u32 soundID = pSwapOffset[swapIndex * 4];
                     if (soundID != 0) {
                         pEntry->_14 = soundID;
                     }
                     break;
                 }
 
-                swapOffset += sizeof(SoundSwapList);
+                swapIndex++;
             }
         }
 
@@ -1746,6 +1736,7 @@ void Mario::initSound() {
 }
 
 bool Mario::playSoundJ(const char* pSoundName, s32 timing) {
+    // FIXME: Keep this goto dispatch shape for match; revisit with a decomp.me scratch before restructuring.
     u32 index;
     if (_96C->search(pSoundName, &index)) {
         s32 type = soundlist[index]._8._4[0] & 0x3;
@@ -1820,7 +1811,7 @@ bool Mario::playSoundJ(const char* pSoundName, s32 timing) {
     recurseEnd:;
     }
 
-    bool isFound = _96C->search(&lbl_806B22C9, pSoundName, &index);
+    bool isFound = _96C->search("声", pSoundName, &index);
     if (isFound) {
         JAISoundID soundID(soundlist[index]._14);
         return MR::startSound(mActor, soundID, timing, -1);
@@ -1849,7 +1840,7 @@ void Mario::stopSoundJ(const char* pSoundName, u32 delay) {
         }
     }
 
-    if (_96C->search(&lbl_806B22C9, pSoundName, &index)) {
+    if (_96C->search("声", pSoundName, &index)) {
         JAISoundID soundID(soundlist[index]._14);
         MR::stopSound(mActor, soundID, delay);
     }
@@ -1907,14 +1898,14 @@ void Mario::playSoundTeresaFlying() {
         }
     }
 
-    playSound(lbl_805CB350, timing);
+    playSound("テレサ浮遊", timing);
 }
 
 void Mario::playSoundTrampleCombo(u8 combo) {
     if (combo >= 7) {
         return;
     }
-    MR::startSystemSE(lbl_805CB35B, combo, -1);
+    MR::startSystemSE("SE_SY_TRAMPLE_COMBO", combo, -1);
 }
 
 void Mario::setSeVersion(u32 version) {

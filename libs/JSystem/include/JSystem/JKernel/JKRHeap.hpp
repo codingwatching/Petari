@@ -68,9 +68,13 @@ public:
         return ~(a1 - 1) & (getFreeSize() - ((a1 - 1) & (a1 - (v4 & 0xF))));
     }
 
-    inline u8* getStart() const { return mStart; }
+    inline u8* getStart() const {
+        return mStart;
+    }
 
-    inline u8* getEnd() const { return mEnd; }
+    inline u8* getEnd() const {
+        return mEnd;
+    }
 
     static JKRHeap* findFromRoot(void*);
 
@@ -79,7 +83,9 @@ public:
 
     static void destroy(JKRHeap*);
 
-    static JKRHeap* getCurrentHeap() { return sCurrentHeap; }
+    static JKRHeap* getCurrentHeap() {
+        return sCurrentHeap;
+    }
 
     static void setAltAramStartAdr(u32);
     static u32 getAltAramStartAdr();
@@ -101,9 +107,13 @@ public:
 
     static u32 ARALT_AramStartAddr;
 
-    inline void* getStartAddr() const { return (void*)mStart; }
+    inline void* getStartAddr() const {
+        return (void*)mStart;
+    }
 
-    inline void* getEndAddr() const { return (void*)mEnd; }
+    inline void* getEndAddr() const {
+        return (void*)mEnd;
+    }
 
     OSMutex mMutex;  // 0x18
     u8* mStart;      // 0x30
@@ -136,4 +146,12 @@ inline void* JKRAllocFromHeap(JKRHeap* heap, u32 size, int alignment) {
 
 inline JKRHeap* JKRGetCurrentHeap() {
     return JKRHeap::getCurrentHeap();
+}
+
+inline void JKRFreeToHeap(JKRHeap* heap, void* ptr) {
+    JKRHeap::free(ptr, heap);
+}
+
+inline void JKRFree(void* ptr) {
+    JKRHeap::free(ptr, NULL);
 }
