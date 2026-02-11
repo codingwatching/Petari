@@ -12,7 +12,8 @@ PoltaActionBase::PoltaActionBase(const char* pName, Polta* pPolta) : ActorStateB
 
 void PoltaActionBase::updateScreamSensor() {
     if (MR::isLessStep(this, 30)) {
-        PoltaFunction::setScreamSensorSize(getHost(), MR::calcNerveValue(this, 30, 0.0f, 3200.0f));
+        f32 size = MR::calcNerveValue(this, 30, 0.0f, 3200.0f);
+        PoltaFunction::setScreamSensorSize(getHost(), size);
     } else {
         PoltaFunction::setScreamSensorSize(getHost(), 0.0f);
     }
