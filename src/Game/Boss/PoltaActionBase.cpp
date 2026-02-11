@@ -6,15 +6,16 @@
 #include "Game/System/NerveExecutor.hpp"
 #include "Game/Util/ScreenUtil.hpp"
 
-PoltaActionBase::PoltaActionBase(const char* pName, Polta* pPolta) : ActorStateBase< Polta >(pName), mPoltaPtr(pPolta), _10(0) {
+PoltaActionBase::PoltaActionBase(const char* pName, Polta* pPolta) : ActorStateBase< Polta >(pName, pPolta), _10(0) {
     MR::createCenterScreenBlur();
 }
 
 void PoltaActionBase::updateScreamSensor() {
     if (MR::isLessStep(this, 30)) {
-        PoltaFunction::setScreamSensorSize(mPoltaPtr, MR::calcNerveValue(this, 30, 0.0f, 3200.0f));
+        f32 size = MR::calcNerveValue(this, 30, 0.0f, 3200.0f);
+        PoltaFunction::setScreamSensorSize(getHost(), size);
     } else {
-        PoltaFunction::setScreamSensorSize(mPoltaPtr, 0.0f);
+        PoltaFunction::setScreamSensorSize(getHost(), 0.0f);
     }
 }
 
@@ -22,37 +23,37 @@ PoltaActionBase::~PoltaActionBase() {}
 
 bool PoltaActionBase::updateWait() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "Wait", true);
+        PoltaFunction::startAction(getHost(), "Wait", true);
     }
-    MR::startLevelSound(mPoltaPtr, "SE_BM_LV_POLTA_IN_BATTLE_ROCK", -1, -1, -1);
-    mPoltaPtr->rotateToPlayer();
-    PoltaFunction::requestStartControllArm(mPoltaPtr);
+    MR::startLevelSound(getHost(), "SE_BM_LV_POLTA_IN_BATTLE_ROCK", -1, -1, -1);
+    getHost()->rotateToPlayer();
+    PoltaFunction::requestStartControllArm(getHost());
     return false;
 }
 
 bool PoltaActionBase::updateDamageBody(bool isFirst) {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "Damage", true);
+        PoltaFunction::startAction(getHost(), "Damage", true);
         MR::startSystemSE("SE_SY_VS_BOSS_DAMAGE_1", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_ROCK_DAMAGE", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_DAMAGE_BODY", -1, -1);
+        MR::startSound(getHost(), "SE_BM_POLTA_ROCK_DAMAGE", -1, -1);
+        MR::startSound(getHost(), "SE_BV_POLTA_DAMAGE_BODY", -1, -1);
         MR::tryRumblePadStrong(this, 0);
         MR::shakeCameraNormalStrong();
         MR::stopScene(3);
-        mPoltaPtr->_EC = 0.0f;
+        getHost()->_EC = 0.0f;
         if (isFirst) {
-            mPoltaPtr->appearBreakModelFirst(mPoltaPtr->mPosition);
+            getHost()->appearBreakModelFirst(getHost()->mPosition);
         } else {
-            mPoltaPtr->appearBreakModelMiddle(mPoltaPtr->mPosition);
+            getHost()->appearBreakModelMiddle(getHost()->mPosition);
         }
     }
-    MR::startLevelSound(mPoltaPtr, "SE_BM_LV_POLTA_IN_BATTLE_ROCK", -1, -1, -1);
-    if (mPoltaPtr->isEndBreakModel()) {
-        mPoltaPtr->killBreakModel();
+    MR::startLevelSound(getHost(), "SE_BM_LV_POLTA_IN_BATTLE_ROCK", -1, -1, -1);
+    if (getHost()->isEndBreakModel()) {
+        getHost()->killBreakModel();
     }
-    if (MR::isActionEnd(mPoltaPtr)) {
-        mPoltaPtr->killBreakModel();
-        PoltaFunction::setScreamSensorSize(mPoltaPtr, 0.0f);
+    if (MR::isActionEnd(getHost())) {
+        getHost()->killBreakModel();
+        PoltaFunction::setScreamSensorSize(getHost(), 0.0f);
         return true;
     }
     return false;
@@ -60,28 +61,28 @@ bool PoltaActionBase::updateDamageBody(bool isFirst) {
 
 bool PoltaActionBase::updateBreakBody() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "BreakBody", true);
+        PoltaFunction::startAction(getHost(), "BreakBody", true);
         MR::startSystemSE("SE_SY_VS_BOSS_DAMAGE_1", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_ROCK_BREAK", -1, -1);
-        MR::startSound(mPoltaPtr, "SE_BV_POLTA_LOSE_SHELL", -1, -1);
-        PoltaFunction::breakLeftArm(mPoltaPtr);
-        PoltaFunction::breakRightArm(mPoltaPtr);
-        PoltaFunction::killPoltaRock(mPoltaPtr);
-        PoltaFunction::breakGroundRock(mPoltaPtr);
+        MR::startSound(getHost(), "SE_BM_POLTA_ROCK_BREAK", -1, -1);
+        MR::startSound(getHost(), "SE_BV_POLTA_LOSE_SHELL", -1, -1);
+        PoltaFunction::breakLeftArm(getHost());
+        PoltaFunction::breakRightArm(getHost());
+        PoltaFunction::killPoltaRock(getHost());
+        PoltaFunction::breakGroundRock(getHost());
         MR::tryRumblePadStrong(this, 0);
-        MR::zeroVelocity(mPoltaPtr);
+        MR::zeroVelocity(getHost());
         MR::shakeCameraNormalStrong();
         MR::stopScene(3);
-        mPoltaPtr->_EC = 0.0f;
-        mPoltaPtr->appearBreakModelLast(mPoltaPtr->mPosition);
+        getHost()->_EC = 0.0f;
+        getHost()->appearBreakModelLast(getHost()->mPosition);
     }
     this->updateScreamSensor();
-    if (mPoltaPtr->isEndBreakModel()) {
-        mPoltaPtr->killBreakModel();
+    if (getHost()->isEndBreakModel()) {
+        getHost()->killBreakModel();
     }
-    if (MR::isActionEnd(mPoltaPtr)) {
-        mPoltaPtr->killBreakModel();
-        PoltaFunction::setScreamSensorSize(mPoltaPtr, 0.0f);
+    if (MR::isActionEnd(getHost())) {
+        getHost()->killBreakModel();
+        PoltaFunction::setScreamSensorSize(getHost(), 0.0f);
         return true;
     }
     return false;
@@ -96,18 +97,18 @@ const char* repairUnusued = "Repair";
 
 bool PoltaActionBase::updateDamageCore() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mPoltaPtr, "DamageCore", 1);
+        PoltaFunction::startAction(getHost(), "DamageCore", 1);
         MR::tryRumblePadStrong(this, 0);
         MR::shakeCameraNormalStrong();
         MR::stopScene(3);
-        mPoltaPtr->_EC = 0.0f;
-        MR::zeroVelocity(mPoltaPtr);
-        PoltaFunction::disperseBombTeresa(mPoltaPtr);
+        getHost()->_EC = 0.0f;
+        MR::zeroVelocity(getHost());
+        PoltaFunction::disperseBombTeresa(getHost());
     }
-    if (MR::isActionEnd(mPoltaPtr)) {
-        MR::startSound(mPoltaPtr, "SE_BM_POLTA_CORE_DOWN", -1, -1);
-        PoltaFunction::killBombTeresa(mPoltaPtr);
-        MR::zeroVelocity(mPoltaPtr);
+    if (MR::isActionEnd(getHost())) {
+        MR::startSound(getHost(), "SE_BM_POLTA_CORE_DOWN", -1, -1);
+        PoltaFunction::killBombTeresa(getHost());
+        MR::zeroVelocity(getHost());
         return true;
     }
     return false;

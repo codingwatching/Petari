@@ -15,9 +15,7 @@ public:
     void exeGenerate();
     void exeEnd();
 
-    inline Polta* getPolta() { return mOwner; }
 
-    /* 0x0C */ Polta* mOwner;
     s32 _10;
     bool _14;
 };

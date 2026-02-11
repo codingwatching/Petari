@@ -15,7 +15,6 @@ public:
     void exeGenerate();
     void exeEnd();
 
-    /* 0x0C */ Polta* mOwner;
     /* 0x10 */ s32 mPatternIndex;
     /* 0x14 */ s32 mIndexIntoPattern;
     /* 0x18 */ s32 mMaxIndexIntoPattern;

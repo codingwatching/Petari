@@ -19,7 +19,7 @@ namespace NrvPoltaStateGenerateBombTeresa {
 };  // namespace NrvPoltaStateGenerateBombTeresa
 
 PoltaStateGroundRockAttack::PoltaStateGroundRockAttack(Polta* pPolta)
-    : ActorStateBase< Polta >("[state]ポルタ地面岩攻撃"), mOwner(pPolta), _10(4), _14(false) {
+    : ActorStateBase< Polta >("[state]ポルタ地面岩攻撃", pPolta), _10(4), _14(false) {
     initNerve(&NrvPoltaStateGenerateBombTeresa::PoltaStateGroundRockAttackNrvSign::sInstance);
 }
 
@@ -30,27 +30,27 @@ void PoltaStateGroundRockAttack::appear() {
 
 void PoltaStateGroundRockAttack::exeSign() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::requestStartControllArm(mOwner);
-        PoltaFunction::startAction(mOwner, "GenerateGroundRockSign", true);
-        MR::startSound(mOwner, "SE_BV_POLTA_PREP_GND_ROCK", -1, -1);
+        PoltaFunction::requestStartControllArm(getHost());
+        PoltaFunction::startAction(getHost(), "GenerateGroundRockSign", true);
+        MR::startSound(getHost(), "SE_BV_POLTA_PREP_GND_ROCK", -1, -1);
     }
-    mOwner->rotateToPlayer();
-    if (MR::isActionEnd(mOwner)) {
+    getHost()->rotateToPlayer();
+    if (MR::isActionEnd(getHost())) {
         setNerve(&NrvPoltaStateGenerateBombTeresa::PoltaStateGroundRockAttackNrvGenerate::sInstance);
     }
 }
 
 void PoltaStateGroundRockAttack::exeGenerate() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mOwner, "GenerateGroundRockStart", true);
-        MR::zeroVelocity(mOwner);
-        _14 = MR::isClockwiseToDir(getPolta(), *MR::getPlayerLastMove(), *MR::getPlayerPos() - getPolta()->mPosition);
+        PoltaFunction::startAction(getHost(), "GenerateGroundRockStart", true);
+        MR::zeroVelocity(getHost());
+        _14 = MR::isClockwiseToDir(getHost(), *MR::getPlayerLastMove(), *MR::getPlayerPos() - getHost()->mPosition);
     }
 
-    if (MR::isBckOneTimeAndStopped(mOwner)) {
-        PoltaFunction::startAction(mOwner, "GenerateGroundRock", true);
-        MR::startSound(mOwner, "SE_BV_POLTA_GEN_GND_ROCK", -1, -1);
-        MR::startSound(mOwner, "SE_BM_POLTA_GEN_GND_ROCK", -1, -1);
+    if (MR::isBckOneTimeAndStopped(getHost())) {
+        PoltaFunction::startAction(getHost(), "GenerateGroundRock", true);
+        MR::startSound(getHost(), "SE_BV_POLTA_GEN_GND_ROCK", -1, -1);
+        MR::startSound(getHost(), "SE_BM_POLTA_GEN_GND_ROCK", -1, -1);
     }
     if (MR::isLessEqualStep(this, 15 * (_10 - 1)) && MR::isIntervalStep(this, 15)) {
         s32 v14 = getNerveStep() / 15;
@@ -59,7 +59,7 @@ void PoltaStateGroundRockAttack::exeGenerate() {
         if (v14 > 0 && !v16) {
             _14 = !_14;
         }
-        PoltaFunction::appearGroundRock(mOwner, (800.0f + (400.0f * v16)), _14 ? 20.0f : -20.0f);
+        PoltaFunction::appearGroundRock(getHost(), (800.0f + (400.0f * v16)), _14 ? 20.0f : -20.0f);
     }
     if (MR::isGreaterStep(this, 15 * _10 + 90)) {
         setNerve(&NrvPoltaStateGenerateBombTeresa::PoltaStateGroundRockAttackNrvEnd::sInstance);
@@ -68,9 +68,9 @@ void PoltaStateGroundRockAttack::exeGenerate() {
 
 void PoltaStateGroundRockAttack::exeEnd() {
     if (MR::isFirstStep(this)) {
-        PoltaFunction::startAction(mOwner, "GenerateGroundRockEnd", true);
+        PoltaFunction::startAction(getHost(), "GenerateGroundRockEnd", true);
     }
-    if (MR::isActionEnd(mOwner)) {
+    if (MR::isActionEnd(getHost())) {
         kill();
     }
 }

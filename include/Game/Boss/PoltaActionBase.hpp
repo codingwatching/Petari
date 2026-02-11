@@ -21,6 +21,5 @@ public:
     bool updateDamageCore();
     void updateScreamSensor();
 
-    /* 0xC */ Polta* mPoltaPtr;
     s32 _10;
 };
