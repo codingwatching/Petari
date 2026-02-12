@@ -24,18 +24,18 @@ DinoPackunBattleEgg::DinoPackunBattleEgg(DinoPackun* pParent) : DinoPackunAction
 
 void DinoPackunBattleEgg::init() {
     initNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance);
-    mStateDamage = new DinoPackunStateDamage(mParent);
+    mStateDamage = new DinoPackunStateDamage(getHost());
     mStateDamage->setDamageEgg();
 }
 
 void DinoPackunBattleEgg::appear() {
     mIsDead = false;
-    mParent->mTail->lockNodePosition(1);
+    getHost()->mTail->lockNodePosition(1);
     setNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance);
 }
 
 void DinoPackunBattleEgg::attackSensor(HitSensor* a1, HitSensor* a2) {
-    if (mParent->isSensorEgg(a1)) {
+    if (getHost()->isSensorEgg(a1)) {
         if (MR::isSensorPlayer(a2)) {
             MR::sendMsgPush(a2, a1);
         }
@@ -43,7 +43,7 @@ void DinoPackunBattleEgg::attackSensor(HitSensor* a1, HitSensor* a2) {
 }
 
 bool DinoPackunBattleEgg::receiveMsgPlayerAttack(u32 msg, HitSensor* a2, HitSensor* a3) {
-    if (!mParent->isSensorEgg(a3)) {
+    if (!getHost()->isSensorEgg(a3)) {
         return false;
     }
 
@@ -53,24 +53,24 @@ bool DinoPackunBattleEgg::receiveMsgPlayerAttack(u32 msg, HitSensor* a2, HitSens
 
 // an attempt was made
 bool DinoPackunBattleEgg::receiveMsgPush(HitSensor* a2, HitSensor* a3) {
-    if (!mParent->isSensorEgg(a3)) {
+    if (!getHost()->isSensorEgg(a3)) {
         return false;
     }
 
     if (!isNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvWalk::sInstance) &&
-        !isNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance) && mParent->isSensorEgg(a2) && MR::isSensorMapObj(a3)) {
+        !isNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance) && getHost()->isSensorEgg(a2) && MR::isSensorMapObj(a3)) {
         TVec3f v11;
-        MR::calcSensorHorizonNormalize(&v11, mParent->mGravity, a3, a2);
+        MR::calcSensorHorizonNormalize(&v11, getHost()->mGravity, a3, a2);
 
-        if (mParent->mVelocity.dot(v11) < 0.0f) {
-            TVec3f* vel = &mParent->mVelocity;
+        if (getHost()->mVelocity.dot(v11) < 0.0f) {
+            TVec3f* vel = &getHost()->mVelocity;
             f32 v8 = v11.dot(*vel);
             JMAVECScaleAdd(&v11, vel, vel, -v8);
         }
 
-        if (isNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvWalk::sInstance) && mParent->_E8.dot(v11) < 0.0f) {
+        if (isNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvWalk::sInstance) && getHost()->_E8.dot(v11) < 0.0f) {
             TVec3f v10;
-            MR::calcSideVec(&v10, mParent);
+            MR::calcSideVec(&v10, getHost());
 
             f32 v9;
 
@@ -105,12 +105,12 @@ bool DinoPackunBattleEgg::receiveOtherMsg(u32 msg, HitSensor* a2, HitSensor* a3)
 
 void DinoPackunBattleEgg::exeTurn() {
     if (MR::isFirstStep(this)) {
-        MR::startBck(mParent, "EggWalk", nullptr);
-        MR::startSound(mParent, "SE_BV_D_PAKKUN_EGG_WALK", -1, -1);
-        MR::startSound(mParent, "SE_BM_D_PAKKUN_SLAVER", -1, -1);
+        MR::startBck(getHost(), "EggWalk", nullptr);
+        MR::startSound(getHost(), "SE_BV_D_PAKKUN_EGG_WALK", -1, -1);
+        MR::startSound(getHost(), "SE_BM_D_PAKKUN_SLAVER", -1, -1);
     }
 
-    mParent->adjustTailRootPosition(sEggOutPosition, 1.0f);
+    getHost()->adjustTailRootPosition(sEggOutPosition, 1.0f);
 
     if (updateTurn(120, 0.30f)) {
         setNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvWalk::sInstance);
@@ -119,10 +119,10 @@ void DinoPackunBattleEgg::exeTurn() {
 
 void DinoPackunBattleEgg::exeWalk() {
     if (MR::isFirstStep(this)) {
-        MR::startBck(mParent, "EggWalk", nullptr);
+        MR::startBck(getHost(), "EggWalk", nullptr);
     }
 
-    mParent->adjustTailRootPosition(sEggOutPosition, 1.0f);
+    getHost()->adjustTailRootPosition(sEggOutPosition, 1.0f);
 
     if (updateWalk(300, 0.5f, 91)) {
         setNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance);

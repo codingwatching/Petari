@@ -24,7 +24,6 @@ public:
     void exeLastDamage();
     void updateDamage();
 
-    DinoPackun* mParent;  // 0xC
     u32 _10;
     u32 _14;
 };
