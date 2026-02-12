@@ -11,7 +11,7 @@ void Mario::check2DMode() {
     _10._15 = false;
 
     AreaObj* area = MR::getAreaObj("PlaneModeCube", mPosition);
-    if (area) {
+    if (area != nullptr) {
         mMovementStates._37 = true;
 
         TVec3f rotate;
@@ -25,7 +25,7 @@ void Mario::check2DMode() {
         }
     } else {
         area = MR::getAreaObj("PlaneCircularModeCube", mPosition);
-        if (area) {
+        if (area != nullptr) {
             TVec3f rotate;
             MR::calcCubeRotate(area, &rotate);
             PSMTXCopy(MR::tmpMtxRotYDeg(rotate.y), _F4);
@@ -41,7 +41,7 @@ void Mario::check2DMode() {
 
     mMovementStates._3A = false;
     area = MR::getAreaObj("PipeModeCube", mPosition);
-    if (area) {
+    if (area != nullptr) {
         set25Dmode(area);
     }
 }
