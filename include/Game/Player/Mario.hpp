@@ -194,7 +194,7 @@ public:
 
     void blown(const TVec3f&);
 
-    void taskOnEffectCheck(u32);
+    bool taskOnEffectCheck(u32);
 
     void doFlow();
 

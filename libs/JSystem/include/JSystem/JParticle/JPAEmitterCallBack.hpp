@@ -2,6 +2,8 @@
 
 class JPABaseEmitter;
 
+#ifndef JPA_EMITTER_CALLBACK_DEFINED
+#define JPA_EMITTER_CALLBACK_DEFINED
 class JPAEmitterCallBack {
     virtual ~JPAEmitterCallBack();
     virtual void execute(JPABaseEmitter*);
@@ -10,3 +12,4 @@ class JPAEmitterCallBack {
     virtual void drawAfter(JPABaseEmitter*);
     virtual void init(JPABaseEmitter*) = 0;
 };
+#endif

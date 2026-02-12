@@ -64,6 +64,8 @@ struct JPAEmitterWorkData {
     /* 0x216 */ u8 mDrawCount;
 };
 
+#ifndef JPA_EMITTER_CALLBACK_DEFINED
+#define JPA_EMITTER_CALLBACK_DEFINED
 class JPAEmitterCallBack {
 public:
     virtual ~JPAEmitterCallBack() = 0;
@@ -72,6 +74,7 @@ public:
     virtual void draw(JPABaseEmitter*) {}
     virtual void drawAfter(JPABaseEmitter*) {}
 };
+#endif
 
 enum {
     JPAEmtrStts_StopEmit = 0x01,

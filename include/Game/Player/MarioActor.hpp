@@ -6,8 +6,12 @@
 
 class FootPrint;
 class J3DAnmTexPattern;
+class J3DModel;
 class J3DModelData;
+class JUTTexture;
 class JAIAudible;
+struct DLholder;
+struct ResTIMG;
 class MarioNullBck;
 class XjointTransform;
 class MarioParts;
@@ -17,11 +21,15 @@ class MarioEffect;
 class MarioAnimator;
 class MarioMessenger;
 class CollisionShadow;
+class JetTurtleShadow;
 class DLchanger;
 class J3DModelX;
 class TornadoMario;
 class ModelHolder;
 class FixedPosition;
+class ModelObj;
+class MultiEmitter;
+class IceStep;
 
 extern bool gIsLuigi;  // (cc68 - 10000)(r13)
 
@@ -133,6 +141,8 @@ public:
 
     void setPunchHitTimer(u8);
     void initEffect();
+    void initMaterialEffect();
+    void initCommonEffect();
     void addSoundObjHolder();
     void initParts();
     void initMorphStringTable();
@@ -144,7 +154,44 @@ public:
     void init2D();
 
     void initDrawAndModel();
+    void initBeeMario();
+    void initTeresaMario();
+    void initHopperMario();
+    void initIceMario();
+    void initInvincibleMario();
+    void initTeresaMarioAnimation();
+    void initTornadoMario();
+    void initBoneMario();
+    void initFireBall();
+    void initShadow();
+    void initHand();
+    void swapTextureInit();
+    void initBlur();
+    void initScreenBox();
+    bool isUseScreenBox() const;
+    void captureScreenBox() const;
+    void writeBackScreenBox() const;
+    void changeDisplayMode(u8);
+    void calcViewAndEntry() override;
     bool isAllHidden() const;
+    void calcViewMainModel();
+    void initFace();
+    void updateFace();
+    void draw() const override;
+    void drawIndirect() const;
+    void drawIndirectModel() const;
+    void drawReflectModel() const;
+    void drawModelBlur() const;
+    void drawColdWaterDamage() const;
+    void drawRasterScroll(f32, s16, f32) const;
+    void drawMosaic() const;
+    void drawLifeUp() const;
+    void drawSpinEffect() const;
+    void drawWallShade(const TVec3f&, const TVec3f&, f32) const;
+    void drawShadow() const;
+    void drawSilhouette() const;
+    void drawPreWipe() const;
+    void drawScreenBlend() const;
 
     void drawMarioModel() const;
 
@@ -153,6 +200,16 @@ public:
     void drawSphereMask() const;
     bool drawDarkMask() const;
     void drawHand() const;
+    void decideShadowMode();
+    void calcViewSilhouetteModel();
+    void calcViewWallShadowModel();
+    void calcViewBlurModel();
+    void calcViewFootPrint();
+    void calc1stPersonView();
+    void calcFogLighting();
+    void calcViewReflectionModel();
+    void calcViewSearchLight();
+    void updateDarkMask(u16);
 
     void resetPadSwing();
     void initActionMatrix();
@@ -163,9 +220,16 @@ public:
     void updateGravityVec(bool, bool);
     void changeTeresaAnimation(const char*, s32);
 
-    void playEffect(const char*);
+    MultiEmitter* playEffect(const char*);
     void playEffectTrans(const char*, const TVec3f&);
+    MultiEmitter* playMaterialEffect(const char*);
+    MultiEmitter* playCommonEffect(const char*);
     void stopEffect(const char*);
+    void stopMaterialEffect(const char*);
+    void stopCommonEffect(const char*);
+    bool isCommonEffect(const char*) const NO_INLINE;
+    bool isMaterialEffect(const char*) const NO_INLINE;
+    s32 getFloorMaterialIndex(u32) const;
 
     void updateActionTrigger();
     void updateControllerSwing();
@@ -176,8 +240,11 @@ public:
     void updateThrowing();
     void updateBeeWingAnimation();
     void updateFairyStar();
+    void createRainbowDL();
+    void updateRandomTexture(f32);
     void updatePlayerMode();
     void updateEffect();
+    bool checkEffectWaterColumn();
     void updateThrowVector();
     void updateForCamera();
     void updateTornado();
@@ -256,7 +323,12 @@ public:
     bool selectHomingInSuperHipDrop(const char*) const;
     f32 getFaceLookHeight(const char*) const;
     void updateSpecialModeAnimation();
+    J3DModelX* getJ3DModel() const;
     J3DModelData* getModelData() const;
+    J3DModelX* getSimpleModel() const;
+    void createTextureDL(DLholder*, u16, u16);
+    void swapTexture(const char*, u8) const;
+    void copyMaterial(J3DModel*, u16, long);
     void rushDropThrowMemoSensor();
     void offTakingFlag();
 
@@ -443,7 +515,7 @@ public:
     FixedPosition* _494;
     FixedPosition* _498;
     FixedPosition* _49C;
-    u32 _4A0;
+    FixedPosition* _4A0;
     u32 _4A4;
     u32 _4A8;
     f32 _4AC;
@@ -490,7 +562,7 @@ public:
     u32 _994;
     u32 _998;
     u32 _99C;
-    u32 _9A0;
+    JetTurtleShadow* _9A0;
     MarioParts* _9A4;
     f32 _9A8;
     f32 _9AC;
@@ -498,46 +570,46 @@ public:
     u16 _9B4;
     u32 _9B8;
     u32 _9BC;
-    u32 _9C0;
+    ModelHolder* _9C0;
     u32 _9C4;
-    u32 _9C8;
+    ModelHolder* _9C8;
     f32 _9CC;
     f32 _9D0;
     u32 _9D4;
     TVec3f _9D8;
-    u32 _9E4;
-    u32 _9E8;
-    u32 _9EC;
+    ModelHolder* _9E4;
+    MarioParts* _9E8;
+    LiveActor* _9EC;
     bool _9F0;
     bool mAlphaEnable;  // 0x9F1
     u16 _9F2;
     TVec3f _9F4;
-    u32 _A00;
-    u32 _A04;
+    ModelHolder* _A00;
+    ModelHolder* _A04;
     u8 _A08;
     u8 _A09;
     u8 mCurrModel;  // 0xA0A
     u8 _A0B;
     u8 _A0C;
     u32 _A10;
-    u32 _A14;
+    J3DModelX* _A14;
     TVec3f _A18;
     u8 _A24;
     u8 _A25;
     // padding
     J3DModelX* mModels[6];  // 0xA28
-    u32 _A40;
-    u32 _A44;
-    u32 _A48;
-    u32 _A4C;
-    u32 _A50;
-    u32 _A54;
+    ModelHolder* _A40;
+    ModelHolder* _A44;
+    ModelHolder* _A48;
+    ModelHolder* _A4C;
+    ModelHolder* _A50;
+    ModelHolder* _A54;
     u8 _A58;
     u8 _A59;
     u8 _A5A;
     u8 _A5B;
     ModelHolder* _A5C;
-    bool _A60;
+    u8 _A60;
     bool _A61;
     bool _A62;
     // padding
@@ -565,26 +637,26 @@ public:
     f32 _B40;
     u32 _B44;
     FootPrint* _B48;
-    u32 _B4C;
+    IceStep** _B4C;
     u16 _B50;
     // padding
     u32 _B54[3];
     u16 _B60;
     // padding
-    u32 _B64;
+    ResTIMG** _B64;
     u8 _B68;
     // padding
     u16 _B6A;
-    u32 _B6C;
+    DLholder* _B6C;
     u16 _B70;
     u8 _B72;
     // padding
     u16 _B74;
     // padding
     J3DAnmTexPattern* mEyeRes;  // 0xB78
-    u32 _B7C;
-    u32 _B80;
-    u32 _B84;
+    JUTTexture* _B7C;
+    JUTTexture* _B80;
+    JUTTexture* _B84;
     u16 _B88;
     MarioNullBck* mNullAnimation;  // 0xB8C
     bool _B90;                     // animations
@@ -600,7 +672,7 @@ public:
     u16 _B9E;
     u32 _BA0;
     u32 _BA4;
-    u32 _BA8;
+    ModelObj* _BA8;
     TVec3f _BAC;
     TVec3f _BB8;
     u16 _BC4;
