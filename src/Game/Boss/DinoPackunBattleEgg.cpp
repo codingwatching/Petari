@@ -1,6 +1,7 @@
 #include "Game/Boss/DinoPackunBattleEgg.hpp"
 #include "Game/Boss/DinoPackun.hpp"
 #include "Game/Boss/DinoPackunStateDamage.hpp"
+#include "Game/Boss/DinoPackunTail.hpp"
 #include "Game/LiveActor/Nerve.hpp"
 #include "Game/Util.hpp"
 #include "Game/Util/PlayerUtil.hpp"
@@ -19,6 +20,35 @@ namespace NrvDinoPackunBattleEgg {
 DinoPackunBattleEgg::DinoPackunBattleEgg(DinoPackun* pParent) : DinoPackunAction("1回戦卵バトル", pParent) {
     mStateDamage = nullptr;
     _18 = 1.0f;
+}
+
+void DinoPackunBattleEgg::init() {
+    initNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance);
+    mStateDamage = new DinoPackunStateDamage(mParent);
+    mStateDamage->setDamageEgg();
+}
+
+void DinoPackunBattleEgg::appear() {
+    mIsDead = false;
+    mParent->mTail->lockNodePosition(1);
+    setNerve(&NrvDinoPackunBattleEgg::DinoPackunBattleEggNrvTurn::sInstance);
+}
+
+void DinoPackunBattleEgg::attackSensor(HitSensor* a1, HitSensor* a2) {
+    if (mParent->isSensorEgg(a1)) {
+        if (MR::isSensorPlayer(a2)) {
+            MR::sendMsgPush(a2, a1);
+        }
+    }
+}
+
+bool DinoPackunBattleEgg::receiveMsgPlayerAttack(u32 msg, HitSensor* a2, HitSensor* a3) {
+    if (!mParent->isSensorEgg(a3)) {
+        return false;
+    }
+
+    MR::isMsgPlayerSpinAttack(msg);
+    return MR::isMsgStarPieceReflect(msg);
 }
 
 // an attempt was made
