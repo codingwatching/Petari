@@ -544,7 +544,7 @@ void FileSelectItem::updateRotate() {
             _160 = -0.5f;
         }
 
-        mRotation.y = MR::repeat(mRotation.y + _160, 360.0f, 0.0f);
+        mRotation.y = MR::repeat(mRotation.y + _160, 0.0f, 360.0f);
         _155 = 0;
     }
 }
