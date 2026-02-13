@@ -1345,7 +1345,7 @@ Game/Boss/TombSpider.cpp:
 	.text       start:0x8007F1A4 end:0x8007FC58
 	.ctors      start:0x8052E994 end:0x8052E998
 	.data       start:0x80571BD8 end:0x80571D78
-	.sdata      start:0x806B17C0 end:0x806B17E0
+	.sdata      start:0x806B17C0 end:0x806B17C8
 	.sbss       start:0x806B37E0 end:0x806B3810
 	.sdata2     start:0x806B8DC8 end:0x806B8DD0
 
@@ -1395,6 +1395,7 @@ Game/Boss/TombSpiderFunction.cpp:
 	.text       start:0x800831CC end:0x80084424
 	.rodata     start:0x80531510 end:0x80531520
 	.data       start:0x805724B8 end:0x805725A0
+	.sdata      start:0x806B17C8 end:0x806B17D0
 	.sdata2     start:0x806B8E40 end:0x806B8E60
 
 Game/Boss/TombSpiderGland.cpp:
@@ -1406,11 +1407,13 @@ Game/Boss/TombSpiderGland.cpp:
 Game/Boss/TombSpiderParts.cpp:
 	.text       start:0x800847B8 end:0x80084FE8
 	.data       start:0x80572698 end:0x80572768
+	.sdata      start:0x806B17D0 end:0x806B17D8
 	.sdata2     start:0x806B8E60 end:0x806B8EB0
 
 Game/Boss/TombSpiderSensorCtrl.cpp:
 	.text       start:0x80084FE8 end:0x80085868
 	.data       start:0x80572768 end:0x80572828
+	.sdata      start:0x806B17D8 end:0x806B17E0
 	.sdata2     start:0x806B8EB0 end:0x806B8EE0
 
 Game/Boss/TombSpiderStateSwoon.cpp:
