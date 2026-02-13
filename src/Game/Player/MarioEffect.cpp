@@ -552,18 +552,14 @@ void MarioActor::initMaterialEffect() {
         entry++;
     }
 
-    _BA4 = reinterpret_cast<u32>(new HashSortTable(entryCount));
-
-    u32 offset = 0;
-    u32 i = 0;
-    while (i < entryCount) {
-        entry = reinterpret_cast< MaterialEffectEntry* >(reinterpret_cast< u8* >(cMaterialEffectTable) + offset);
-        reinterpret_cast<HashSortTable*>(_BA4)->add(entry->mName, reinterpret_cast<u32>(entry), false);
-        i++;
-        offset += sizeof(MaterialEffectEntry);
+    _BA4 = new HashSortTable(entryCount);
+    entry = cMaterialEffectTable;
+    while (entry->mName) {
+        _BA4->add(entry->mName, reinterpret_cast<u32>(entry), false);
+        entry++;
     }
 
-    reinterpret_cast<HashSortTable*>(_BA4)->sort();
+    _BA4->sort();
 }
 
 s32 MarioActor::getFloorMaterialIndex(u32 flags) const {
@@ -583,26 +579,25 @@ s32 MarioActor::getFloorMaterialIndex(u32 flags) const {
     }
 
     if (mMario->isStatusActive(1)) {
-        const u32 movementStates = mMario->mMovementStates_LOW_WORD;
-        if ((movementStates << 9) & 0x80000000) {
+        if (mMario->mMovementStates._1C) {
             floor = mMario->_964[0];
-        } else if ((movementStates << 26) & 0x80000000) {
+        } else if (mMario->mMovementStates._5) {
             floor = mMario->_964[1];
-        } else if ((movementStates << 27) & 0x80000000) {
+        } else if (mMario->mMovementStates._4) {
             floor = mMario->_964[2];
         }
     }
 
-    if ((mMario->mDrawStates_WORD << 19) & 0x80000000) {
+    if (mMario->mDrawStates._C) {
         floor = 0x17;
     }
 
-    if ((mMario->mDrawStates_WORD << 20) & 0x80000000) {
+    if (mMario->mDrawStates._B) {
         floor = 0x17;
     }
 
     if (flags & 0x2) {
-        if ((mMario->mDrawStates_WORD << 30) & 0x80000000) {
+        if (mMario->mDrawStates._1) {
             floor = 0x17;
         }
     }
@@ -648,11 +643,11 @@ s32 MarioActor::getFloorMaterialIndex(u32 flags) const {
         break;
     }
 
-    if (((mMario->mDrawStates_WORD << 19) & 0x80000000) || ((mMario->mDrawStates_WORD << 20) & 0x80000000)) {
+    if (mMario->mDrawStates._C || mMario->mDrawStates._B) {
         materialIndex = 1;
     }
 
-    if (!(mMario->mMovementStates_LOW_WORD & 0x40000000)) {
+    if (!mMario->mMovementStates.digitalJump) {
         if (mMario->mSwim->_1B2 != 0) {
             if (mMario->mSwim->_1B8 < 0.0f) {
                 materialIndex = 1;
@@ -666,37 +661,37 @@ s32 MarioActor::getFloorMaterialIndex(u32 flags) const {
 MultiEmitter* MarioActor::playMaterialEffect(const char* pName) {
     u32 value = 0;
 
-    reinterpret_cast<HashSortTable*>(_BA4)->search(pName, &value);
+    _BA4->search(pName, &value);
+    MaterialEffectEntry* entry = reinterpret_cast< MaterialEffectEntry* >(value);
 
-    const u8 flag = reinterpret_cast< MaterialEffectEntry* >(value)->mFlag.mByte0;
+    const u8 flag = entry->mFlag.mByte0;
     const s32 materialIndex = getFloorMaterialIndex(flag);
     if (materialIndex == -1) {
         return nullptr;
     }
 
     const u32 materialOffset = static_cast< u32 >(materialIndex);
-    const char* effectName = reinterpret_cast< MaterialEffectEntry* >(value)->mEffects[materialOffset];
+    const char* effectName = entry->mEffects[materialOffset];
     if (!effectName) {
         return nullptr;
     }
 
     if (flag == 1) {
-        const char* current = reinterpret_cast< MaterialEffectEntry* >(value)->mCurrent;
+        const char* current = entry->mCurrent;
         if (current && current == effectName) {
-            return reinterpret_cast< MaterialEffectEntry* >(value)->mEmitter;
+            return entry->mEmitter;
         }
     }
 
     MultiEmitter* emitter = MR::emitEffect(this, effectName);
 
-    const char* current = reinterpret_cast< MaterialEffectEntry* >(value)->mCurrent;
-    if (current && current != reinterpret_cast< MaterialEffectEntry* >(value)->mEffects[materialOffset]) {
+    const char* current = entry->mCurrent;
+    if (current && current != entry->mEffects[materialOffset]) {
         MR::deleteEffect(this, current);
     }
 
-    reinterpret_cast< MaterialEffectEntry* >(value)->mCurrent =
-        reinterpret_cast< MaterialEffectEntry* >(value)->mEffects[materialOffset];
-    reinterpret_cast< MaterialEffectEntry* >(value)->mEmitter = emitter;
+    entry->mCurrent = entry->mEffects[materialOffset];
+    entry->mEmitter = emitter;
 
     if (emitter) {
         MarioEffect* marioEffect = mMarioEffect;
@@ -715,12 +710,13 @@ MultiEmitter* MarioActor::playMaterialEffect(const char* pName) {
 void MarioActor::stopMaterialEffect(const char* pName) {
     u32 value = 0;
 
-    reinterpret_cast<HashSortTable*>(_BA4)->search(pName, &value);
+    _BA4->search(pName, &value);
+    MaterialEffectEntry* entry = reinterpret_cast< MaterialEffectEntry* >(value);
 
-    if (reinterpret_cast<MaterialEffectEntry*>(value)->mCurrent) {
-        MR::deleteEffect(this, reinterpret_cast<MaterialEffectEntry*>(value)->mCurrent);
-        reinterpret_cast<MaterialEffectEntry*>(value)->mCurrent = nullptr;
-        reinterpret_cast<MaterialEffectEntry*>(value)->mEmitter = nullptr;
+    if (entry->mCurrent) {
+        MR::deleteEffect(this, entry->mCurrent);
+        entry->mCurrent = nullptr;
+        entry->mEmitter = nullptr;
     }
 }
 
@@ -729,9 +725,9 @@ void MarioActor::initCommonEffect() {
 
     _B9C = 0;
     _B9E = 0;
-    _BA0 = reinterpret_cast<u32>(new SmokeEffectEntry*[8]);
+    _BA0 = new SmokeEffectEntry*[8];
 
-    SmokeEffectEntry* entry = reinterpret_cast< SmokeEffectEntry* >(const_cast<char*>(base) + 0x364);
+    SmokeEffectEntry* entry = cSmokeTable;
     while (entry->mName) {
         const char* smokeEffects[] = { lbl_805C7088, lbl_805C7094, lbl_805C70A4, lbl_805C70B0 };
         const char* waterEffects[] = { lbl_805C70C0, lbl_805C70CC, lbl_805C70DC, lbl_805C70E8 };
@@ -857,8 +853,7 @@ void MarioActor::initCommonEffect() {
         switch (entry->mType.mByte0) {
         case 2:
         case 5: {
-            SmokeEffectEntry** entries = reinterpret_cast<SmokeEffectEntry**>(_BA0);
-            entries[_B9E] = entry;
+            _BA0[_B9E] = entry;
             _B9E++;
             break;
         }
@@ -871,7 +866,7 @@ void MarioActor::initCommonEffect() {
         entry->mEmitter = nullptr;
         entry->mMaterial = 0;
         _B9C++;
-        entry = reinterpret_cast< SmokeEffectEntry* >(reinterpret_cast< u8* >(entry) + sizeof(SmokeEffectEntry));
+        entry++;
     }
 }
 
@@ -1074,13 +1069,10 @@ MultiEmitter* MarioActor::playCommonEffect(const char* pName) {
 }
 void MarioActor::stopCommonEffect(const char* pName) {
     const u32 hash = MR::getHashCode(pName);
-    SmokeEffectEntry* table = cSmokeTable;
-    u32 offset = 0;
+    SmokeEffectEntry* entry = cSmokeTable;
     u32 i = 0;
 
     while (i < _B9C) {
-        SmokeEffectEntry* entry =
-            reinterpret_cast< SmokeEffectEntry* >(reinterpret_cast< u8* >(table) + offset);
         if (entry->mHash == hash) {
             if (entry->mEmitter) {
                 entry->mEmitter->deleteEmitter();
@@ -1089,7 +1081,7 @@ void MarioActor::stopCommonEffect(const char* pName) {
         }
 
         i++;
-        offset += sizeof(SmokeEffectEntry);
+        entry++;
     }
 }
 
@@ -1236,16 +1228,15 @@ void MarioActor::updateEffect() {
     s32 effectB = 0;
     s32 effectC = 0;
 
-    if ((mMario->mMovementStates_LOW_WORD << 5) & 0x80000000) {
+    if (mMario->mMovementStates._1A) {
         effectA = 1;
     }
 
-    if (((mMario->mMovementStates_LOW_WORD << 16) & 0x80000000) &&
-        ((mMario->mMovementStates_LOW_WORD << 2) & 0x80000000)) {
+    if (mMario->mMovementStates._F && mMario->mMovementStates._1D) {
         effectA = 1;
     }
 
-    if (((mMario->mMovementStates_LOW_WORD << 2) & 0x80000000) && mMario->_3F4 > 0.001f) {
+    if (mMario->mMovementStates._1D && mMario->_3F4 > 0.001f) {
         effectA = 1;
     }
 
@@ -1253,8 +1244,7 @@ void MarioActor::updateEffect() {
         effectA = 1;
     }
 
-    if (((mMario->mMovementStates_HIGH_WORD << 21) & 0x80000000) ||
-        ((mMario->mMovementStates_HIGH_WORD << 22) & 0x80000000)) {
+    if (mMario->mMovementStates._2A || mMario->mMovementStates._29) {
         if (mMario->_278 > 0.001f) {
             effectA = 1;
         }
@@ -1295,9 +1285,7 @@ void MarioActor::updateEffect() {
            (static_cast< u32 >(effectC) << 29);
 
     effectA = 0;
-    if (((mMario->mMovementStates_HIGH_WORD << 4) & 0x80000000) &&
-        !((mMario->mMovementStates_LOW_WORD << 25) & 0x80000000) &&
-        ((mMario->mMovementStates_LOW_WORD << 2) & 0x80000000)) {
+    if (mMario->mMovementStates._3B && !mMario->mMovementStates._6 && mMario->mMovementStates._1D) {
         effectA = 1;
     }
 
@@ -1342,7 +1330,7 @@ void MarioActor::updateEffect() {
     mMarioEffect->doCubeEffect();
 
     effectC = 0;
-    if ((mMario->mMovementStates_LOW_WORD >> 31) != 0) {
+    if (mMario->mMovementStates._1F) {
         if (mPlayerMode == 4 && mMario->checkLvlA() && mMario->_402 != 0 && ((_37C & 3) == 0)) {
             if (mMario->mVerticalSpeed < 100.0f) {
                 effectC = 1;
@@ -1362,11 +1350,9 @@ void MarioActor::updateEffect() {
 
     _B98 = (_B98 & ~0x04000000) | (static_cast< u32 >(effectC) << 26);
 
-    u32 offset = 0;
     u32 i = 0;
     while (i < _B9E) {
-        SmokeEffectEntry* entry =
-            *reinterpret_cast< SmokeEffectEntry** >(reinterpret_cast< u8* >(_BA0) + offset);
+        SmokeEffectEntry* entry = _BA0[i];
         if (entry->mTimer != 0) {
             entry->mTimer--;
             if (entry->mTimer == 0) {
@@ -1375,7 +1361,6 @@ void MarioActor::updateEffect() {
         }
 
         i++;
-        offset += sizeof(SmokeEffectEntry*);
     }
 }
 
@@ -1549,15 +1534,14 @@ MarioEffect::MarioEffect(MarioActor* pActor) : MarioModule(pActor) {
     _1C.mColor = 0xFFFFFFFFu;
     _20.mColor = 0xFFFFFFFFu;
 
-    register MovingFollowMtx* follow = _54;
-    register MovingFollowMtx* end = _54 + 0x100;
-    register u32 zero = 0;
+    MovingFollowMtx* follow = _54;
+    MovingFollowMtx* end = _54 + 0x100;
     do {
         PSMTXIdentity(follow->_4.toMtxPtr());
         PSMTXIdentity(follow->_34.toMtxPtr());
-        follow->_64 = reinterpret_cast<MtxPtr>(zero);
-        follow->_68 = reinterpret_cast<JPABaseEmitter*>(zero);
-        follow->_0 = zero;
+        follow->_64 = nullptr;
+        follow->_68 = nullptr;
+        follow->_0 = 0;
         ++follow;
     } while (follow < end);
 
@@ -1581,7 +1565,7 @@ void MarioEffect::playSwingEffect() {
 
 void MarioEffect::doCubeEffect() {
     Mario* mario = getPlayer();
-    if (mario->mMovementStates_LOW_WORD & 0x00000200) {
+    if (mario->mMovementStates._9) {
         return;
     }
 
@@ -1614,10 +1598,10 @@ void MarioEffect::doCubeEffect() {
         _18 = 0;
     }
 
-    if (getPlayer()->_10_LOW_WORD & 0x40000000) {
+    if (getPlayer()->_10.digitalJump) {
         playSwingEffect();
         Mario* swingMario = getPlayer();
-        swingMario->_10_LOW_WORD &= ~0x40000000;
+        swingMario->_10.digitalJump = false;
     }
 }
 
